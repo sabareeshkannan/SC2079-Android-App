@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bg_dark">
+
+    <com.mdp26.mdp20.hyperspace.HyperspaceView
+        android:id="@+id/hyperspaceView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <!-- Overlay UI -->
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/topAppBar"
+        android:layout_width="0dp"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@android:color/transparent"
+        android:elevation="0dp"
+        app:title="@string/red_button_title"
+        app:titleTextColor="@color/primary"
+        app:navigationIcon="?attr/homeAsUpIndicator"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <TextView
+        android:id="@+id/txtEngage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/red_button_subtitle"
+        android:textColor="@color/accent"
+        android:textSize="20sp"
+        android:letterSpacing="0.2"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/throttleContainer"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" 
+        android:layout_marginBottom="20dp"/>
+
+    <!-- Throttle Container -->
+    <FrameLayout
+        android:id="@+id/throttleContainer"
+        android:layout_width="120dp"
+        android:layout_height="350dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+        
+        <!-- Track Background -->
+        <View
+            android:layout_width="60dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:background="@drawable/bg_throttle_track_vertical"/>
+            
+        <!-- Fill Level (Progress) -->
+        <View
+            android:id="@+id/throttleFill"
+            android:layout_width="60dp"
+            android:layout_height="0dp"
+            android:layout_gravity="bottom|center_horizontal"
+            android:background="@color/primary_light"
+            android:alpha="0.5"/>
+
+        <!-- The Handle -->
+        <ImageView
+            android:id="@+id/throttleHandle"
+            android:layout_width="100dp"
+            android:layout_height="50dp"
+            android:layout_gravity="bottom|center_horizontal"
+            android:src="@drawable/bg_throttle_handle"
+            android:elevation="8dp"/>
+            
+    </FrameLayout>
+    
+    <TextView
+        android:id="@+id/txtPercent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="0%"
+        android:textColor="@color/primary"
+        android:textSize="32sp"
+        android:fontFamily="monospace"
+        android:textStyle="bold"
+        app:layout_constraintTop_toBottomOf="@+id/throttleContainer"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="20dp"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Outer glow effect -->
+    <item>
+        <shape android:shape="rectangle">
+            <solid android:color="#9D4EDD40" />
+            <corners android:radius="14dp" />
+            <padding android:left="2dp" android:top="2dp" android:right="2dp" android:bottom="2dp" />
+        </shape>
+    </item>
+    
+    <!-- Gradient background -->
+    <item android:top="2dp" android:left="2dp" android:right="2dp" android:bottom="2dp">
+        <shape android:shape="rectangle">
+            <gradient
+                android:angle="135"
+                android:startColor="@color/primary"
+                android:centerColor="@color/primary_light"
+                android:endColor="@color/secondary"
+                android:type="linear" />
+            <corners android:radius="12dp" />
+        </shape>
+    </item>
+    
+    <!-- Inner highlight -->
+    <item android:top="2dp" android:left="2dp" android:right="2dp" android:bottom="8dp">
+        <shape android:shape="rectangle">
+            <solid android:color="#40FFFFFF" />
+            <corners android:radius="12dp" />
+        </shape>
+    </item>
+</layer-list>

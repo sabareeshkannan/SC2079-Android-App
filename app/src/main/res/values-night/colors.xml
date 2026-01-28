@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+
+    <!-- Deep Slate / Midnight Theme -->
+    <!-- Interstellar Command Palette (Dark Mode) -->
+    <color name="bg_dark">#0B0D17</color> <!-- Deep Space Blue -->
+    <color name="bg_darker">#050608</color>
+    <color name="bg_card">#151922</color> <!-- Lighter Space Blue -->
+    <color name="bg_card_light">#1F2937</color>
+    <color name="divider">#2D3748</color>
+
+    <!-- Branding Colors -->
+    <!-- Primary: Holographic Cyan -->
+    <color name="primary">#00F0FF</color>
+    <color name="primary_dark">#00B8CC</color>
+    <color name="primary_light">#80F7FF</color>
+    <color name="primary_glow">#00F0FF</color>
+    
+    <!-- Secondary: Nebula Purple -->
+    <color name="secondary">#7000FF</color>
+    <color name="secondary_dark">#4A00B3</color>
+    <color name="secondary_light">#A366FF</color>
+    <color name="secondary_glow">#BF80FF</color>
+    
+    <!-- Accent: Warning Orange -->
+    <color name="accent">#FF5C00</color>
+    <color name="accent_dark">#CC4900</color>
+    <color name="accent_light">#FF8533</color>
+    
+    <!-- Tertiary: Alert Red -->
+    <color name="tertiary">#FF0055</color>
+    <color name="tertiary_light">#FF4D88</color>
+    
+    <!-- Glassmorphism compatibility -->
+    <color name="glass_bg">#1AFFFFFF</color>
+    <color name="glass_border">#33FFFFFF</color>
+    
+    <!-- Text colors -->
+    <color name="text_primary">#FFFFFF</color>
+    <color name="text_secondary">#8F9BB3</color>
+    <color name="text_hint">#4A5568</color>
+    <color name="text_glow">#00F0FF</color>
+    
+    <!-- Status colors -->
+    <color name="status_success">#00FF9D</color> <!-- Neon Green -->
+    <color name="status_warning">#FFCC00</color>
+    <color name="status_error">#FF3B30</color>
+    
+    <!-- Gradient colors -->
+    <color name="gradient_start">#0B0D17</color>
+    <color name="gradient_mid">#1A202C</color>
+    <color name="gradient_end">#151922</color>
+
+    <color name="button_pressed_grey">#4A5568</color>
+
+    <!-- Canvas Specific Colors -->
+    <!-- Neon Colors for high contrast on dark bg -->
+    <color name="grid_line_red">#FF0055</color> <!-- Neon Red -->
+    <color name="grid_line_blue">#00F0FF</color> <!-- Neon Cyan -->
+    
+    <color name="obstacle_body">#2C3E50</color>
+    <color name="obstacle_selected">#FFFFFF</color> 
+    
+    <color name="input_border">#2D3748</color>
+    <color name="input_bg">#151922</color>
+</resources>

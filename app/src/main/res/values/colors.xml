@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Sci-Fi Laboratory Palette (Light Mode) -->
+    <color name="black">#000000</color>
+    <color name="white">#FFFFFF</color>
+
+    <!-- Backgrounds -->
+    <color name="bg_dark">#F3F4F6</color> <!-- Soft Porcelain -->
+    <color name="bg_darker">#E5E7EB</color>
+    <color name="bg_card">#FFFFFF</color> <!-- Pure White -->
+    <color name="bg_card_light">#F9FAFB</color>
+    <color name="divider">#E5E7EB</color>
+
+    <!-- Branding Colors -->
+    <!-- Primary: Deep Science Blue -->
+    <color name="primary">#2563EB</color>
+    <color name="primary_dark">#1D4ED8</color>
+    <color name="primary_light">#60A5FA</color>
+    <color name="primary_glow">#3B82F6</color>
+    
+    <!-- Secondary: Tech Teal -->
+    <color name="secondary">#059669</color>
+    <color name="secondary_dark">#047857</color>
+    <color name="secondary_light">#34D399</color>
+    <color name="secondary_glow">#10B981</color>
+    
+    <!-- Accent: Energetic Orange -->
+    <color name="accent">#EA580C</color>
+    <color name="accent_dark">#C2410C</color>
+    <color name="accent_light">#FB923C</color>
+    
+    <!-- Tertiary: Crimson -->
+    <color name="tertiary">#DC2626</color>
+    <color name="tertiary_light">#EF4444</color>
+    
+    <!-- Glassmorphism -->
+    <color name="glass_bg">#99FFFFFF</color>
+    <color name="glass_border">#1A000000</color>
+    
+    <!-- Text colors -->
+    <color name="text_primary">#111827</color> <!-- Gunmetal -->
+    <color name="text_secondary">#4B5563</color> <!-- Cool Gray -->
+    <color name="text_hint">#9CA3AF</color>
+    <color name="text_glow">#6B7280</color>
+    
+    <!-- Status colors -->
+    <color name="status_success">#059669</color>
+    <color name="status_warning">#B45309</color>
+    <color name="status_error">#DC2626</color>
+    
+    <!-- Gradient colors (Subtle) -->
+    <color name="gradient_start">#EFF6FF</color>
+    <color name="gradient_mid">#DBEAFE</color>
+    <color name="gradient_end">#BFDBFE</color>
+
+    <color name="button_pressed_grey">#E5E7EB</color>
+
+    <!-- Canvas Specific Colors -->
+    <!-- Softened lines for professional look -->
+    <color name="grid_line_red">#F87171</color>
+    <color name="grid_line_blue">#60A5FA</color>
+    
+    <color name="obstacle_body">#1F2937</color> <!-- Gunmetal for strong contrast -->
+    <color name="obstacle_selected">#E5E7EB</color> 
+    
+    <color name="input_border">#D1D5DB</color>
+    <color name="input_bg">#FFFFFF</color>
+</resources>
