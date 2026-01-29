@@ -150,27 +150,28 @@ public class CanvasActivity extends AppCompatActivity {
         // Spot Rotation Controls
         findViewById(R.id.btnRobotRight).setOnClickListener(view -> {
             if (myApp.btConnection() != null)
-                myApp.btConnection().sendMessage("rr"); // Rotate Right (Spot)
+                myApp.btConnection().sendMessage("tr"); // Rotate Right (Spot)
             myApp.robot().rotateRight();
             robotView.invalidate();
         });
         findViewById(R.id.btnRobotLeft).setOnClickListener(view -> {
             if (myApp.btConnection() != null)
-                myApp.btConnection().sendMessage("rl"); // Rotate Left (Spot)
+                myApp.btConnection().sendMessage("tl"); // Rotate Left (Spot)
             myApp.robot().rotateLeft();
             robotView.invalidate();
         });
 
         // Arc Turn Controls
+        // Arc Turn Controls
         findViewById(R.id.btnRobotArcRight).setOnClickListener(view -> {
             if (myApp.btConnection() != null)
-                myApp.btConnection().sendMessage("tr"); // Turn Right (Arc)
+                myApp.btConnection().sendMessage("fr"); // Forward Right (Arc)
             myApp.robot().turnRight();
             robotView.invalidate();
         });
         findViewById(R.id.btnRobotArcLeft).setOnClickListener(view -> {
             if (myApp.btConnection() != null)
-                myApp.btConnection().sendMessage("tl"); // Turn Left (Arc)
+                myApp.btConnection().sendMessage("fl"); // Forward Left (Arc)
             myApp.robot().turnLeft();
             robotView.invalidate();
         });
@@ -358,8 +359,13 @@ public class CanvasActivity extends AppCompatActivity {
                 // mediaPlayer.start();
             }
         } else if (btMsg instanceof BluetoothMessage.TargetFoundMessage m) {
-            // update obstacle's target, then invalidate ui
+            // update obstacle's target
             myApp.grid().updateObstacleTarget(m.obstacleId(), m.targetId());
+            // update facing if provided
+            if (m.direction() != -1) {
+                myApp.grid().findObstacleWithId(m.obstacleId())
+                    .ifPresent(obs -> obs.setFacing(Facing.getFacingFromCode(m.direction())));
+            }
             canvasView.invalidate();
             receivedMessages.append("\n[image-rec] " + m.rawMsg() + "\n"); // just print on ui for now
         } else if (btMsg instanceof BluetoothMessage.RobotPositionMessage m) {

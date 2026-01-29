@@ -124,12 +124,6 @@ public class CanvasTouchController implements View.OnTouchListener {
     }
 
     private String convertFacingToInt(com.mdp26.mdp20.Facing facing) {
-        switch (facing) {
-            case NORTH: return "0";
-            case EAST: return "1";
-            case SOUTH: return "2";
-            case WEST: return "3";
-            default: return "0";
-        }
+        return String.valueOf(facing.getMappedCode());
     }
 }

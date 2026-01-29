@@ -72,7 +72,7 @@ public class CanvasView extends View {
         targetPaint.setTextAlign(Paint.Align.CENTER);
         targetPaint.setTypeface(android.graphics.Typeface.create("sans-serif-black", android.graphics.Typeface.NORMAL));
         targetPaint.setFakeBoldText(true);
-        targetPaint.setTextSize(24);
+        targetPaint.setTextSize(21);
 
         // Facing indicator styling
         facingPaint.setColor(androidx.core.content.ContextCompat.getColor(context, com.mdp26.mdp20.R.color.secondary)); 

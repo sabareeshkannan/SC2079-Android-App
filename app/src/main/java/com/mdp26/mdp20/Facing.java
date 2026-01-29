@@ -4,11 +4,11 @@ package com.mdp26.mdp20;
  * Simple enum for heading/direction/facing.
  */
 public enum Facing {
-    NORTH(0),
+    NORTH(1),
     EAST(2),
-    SOUTH(4),
-    WEST(6),
-    SKIP(8);
+    SOUTH(3),
+    WEST(4),
+    SKIP(0);
 
     private int mappedCode;
 
@@ -25,11 +25,10 @@ public enum Facing {
 
     public static Facing getFacingFromCode(int code) {
         return switch (code) {
-            case 0 -> NORTH;
+            case 1 -> NORTH;
             case 2 -> EAST;
-            case 4 -> SOUTH;
-            case 6 -> WEST;
-            case 8 -> SKIP;
+            case 3 -> SOUTH;
+            case 4 -> WEST;
             default -> NORTH;
         };
     }

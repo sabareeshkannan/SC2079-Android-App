@@ -7,6 +7,8 @@ import android.view.View;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.graphics.Color;
 
 import com.mdp26.mdp20.Facing;
 import com.mdp26.mdp20.R;
@@ -14,6 +16,9 @@ import com.mdp26.mdp20.R;
 
 public class RobotView extends View {
     private static final String TAG = "RobotView";
+    private final Paint startRegionPaint = new Paint();
+    private final Paint highlightPaint = new Paint();
+    private Grid grid;
     private Bitmap robotFacingNorth;
     private Bitmap robotFacingEast;
     private Bitmap robotFacingSouth;
@@ -33,6 +38,13 @@ public class RobotView extends View {
         robotFacingEast = BitmapFactory.decodeResource(getResources(), R.drawable.robot_face_right);
         robotFacingSouth = BitmapFactory.decodeResource(getResources(), R.drawable.robot_face_down);
         robotFacingWest = BitmapFactory.decodeResource(getResources(), R.drawable.robot_face_left);
+
+        startRegionPaint.setStrokeWidth(4);
+        startRegionPaint.setStyle(Paint.Style.STROKE);
+
+        // Highlight Paint
+        highlightPaint.setColor(Color.argb(80, 0, 255, 255)); // Semi-transparent Cyan
+        highlightPaint.setStyle(Paint.Style.FILL);
     }
 
     @Override
@@ -75,6 +87,9 @@ public class RobotView extends View {
             case WEST -> robotFacingWest;
             case SKIP -> null;
         };
+
+        // Draw highlight under the robot
+        canvas.drawRect(left, top, right, bottom, highlightPaint);
 
         // Draw the scaled and centered robot bitmap
         if (currentRobotBitmap != null) {

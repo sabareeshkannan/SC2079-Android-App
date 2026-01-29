@@ -43,9 +43,16 @@ public sealed interface BluetoothMessage permits BluetoothMessage.CustomMessage,
     /**
      * Received from RPI.
      */
-    public record TargetFoundMessage(String rawMsg, int obstacleId, int targetId) implements BluetoothMessage {}
+    /**
+     * Received from RPI.
+     * Direction is -1 if not provided/applicable.
+     */
+    public record TargetFoundMessage(String rawMsg, int obstacleId, int targetId, int direction) implements BluetoothMessage {}
     public static BluetoothMessage ofTargetFoundMessage(String rawMsg, int obstacleId, int targetId) {
-        return new TargetFoundMessage(rawMsg, obstacleId, targetId);
+        return new TargetFoundMessage(rawMsg, obstacleId, targetId, -1);
+    }
+    public static BluetoothMessage ofTargetFoundMessage(String rawMsg, int obstacleId, int targetId, int direction) {
+        return new TargetFoundMessage(rawMsg, obstacleId, targetId, direction);
     }
 
     /**

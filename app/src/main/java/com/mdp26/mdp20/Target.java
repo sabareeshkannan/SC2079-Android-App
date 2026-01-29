@@ -41,17 +41,24 @@ public class Target {
     };
 
     private final String targetStr;
+    private final int id;
 
-    public Target(String targetStr) {
+    public Target(int id, String targetStr) {
+        this.id = id;
         this.targetStr = targetStr;
     }
 
 
     public static Target of(int targetId) {
-        return new Target(map[targetId]);
+        if (targetId < 0 || targetId >= map.length) return new Target(-1, "???");
+        return new Target(targetId, map[targetId]);
     }
 
     public String getTargetStr() {
         return targetStr;
+    }
+
+    public int getTargetId() {
+        return id;
     }
 }

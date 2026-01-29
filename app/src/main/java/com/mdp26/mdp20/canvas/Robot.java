@@ -48,75 +48,110 @@ public class Robot {
         return this.facing;
     }
 
+    // Helper to check bounds
+    private boolean isWithinBounds(double x, double y) {
+        return x >= 1 && x < Grid.GRID_SIZE - 1 && y >= 1 && y < Grid.GRID_SIZE - 1;
+    }
+
     // Robot moves forward by one cell in the direction it is facing
     public void moveForward() {
+        int newX = this.position.getXInt();
+        int newY = this.position.getYInt();
         if (this.facing == Facing.NORTH) {
-            this.position.setY(this.position.getYInt() + 1);
+            newY += 1;
         } else if (this.facing == Facing.EAST) {
-            this.position.setX(this.position.getXInt() + 1);
+            newX += 1;
         } else if (this.facing == Facing.SOUTH) {
-            this.position.setY(this.position.getYInt() - 1);
+            newY -= 1;
         } else if (this.facing == Facing.WEST) {
-            this.position.setX(this.position.getXInt() - 1);
+            newX -= 1;
+        }
+        if (isWithinBounds(newX, newY)) {
+            this.position.setX(newX);
+            this.position.setY(newY);
         }
     }
 
     // Robot moves backward by one cell in the direction it is facing
     public void moveBackward() {
+        int newX = this.position.getXInt();
+        int newY = this.position.getYInt();
         if (this.facing == Facing.NORTH) {
-            this.position.setY(this.position.getYInt() - 1);
+            newY -= 1;
         } else if (this.facing == Facing.EAST) {
-            this.position.setX(this.position.getXInt() - 1);
+            newX -= 1;
         } else if (this.facing == Facing.SOUTH) {
-            this.position.setY(this.position.getYInt() + 1);
+            newY += 1;
         } else if (this.facing == Facing.WEST) {
-            this.position.setX(this.position.getXInt() + 1);
+            newX += 1;
+        }
+        if (isWithinBounds(newX, newY)) {
+            this.position.setX(newX);
+            this.position.setY(newY);
         }
     }
 
     // Robot turns right by moving forward by one cell and the turning radius
     public void turnRight() {
+        double newX = this.position.getXInt();
+        double newY = this.position.getYInt();
+        Facing newFacing = this.facing;
+
         if (this.facing == Facing.NORTH) {
-            this.position.setY(this.position.getYInt() + 1);
-            this.position.setX(this.position.getXInt() + turningRadius);
-            this.facing = Facing.EAST;
+            newY += 1;
+            newX += turningRadius;
+            newFacing = Facing.EAST;
         } else if (this.facing == Facing.EAST) {
-            this.position.setX(this.position.getXInt() + 1);
-            this.position.setY(this.position.getYInt() - turningRadius);
-            this.facing = Facing.SOUTH;
+            newX += 1;
+            newY -= turningRadius;
+            newFacing = Facing.SOUTH;
         } else if (this.facing == Facing.SOUTH) {
-            this.position.setY(this.position.getYInt() - 1);
-            this.position.setX(this.position.getXInt() - turningRadius);
-            this.facing = Facing.WEST;
+            newY -= 1;
+            newX -= turningRadius;
+            newFacing = Facing.WEST;
         } else if (this.facing == Facing.WEST) {
-            this.position.setX(this.position.getXInt() - 1);
-            this.position.setY(this.position.getYInt() + turningRadius);
-            this.facing = Facing.NORTH;
+            newX -= 1;
+            newY += turningRadius;
+            newFacing = Facing.NORTH;
+        }
+
+        if (isWithinBounds(newX, newY)) {
+            this.position.setX(newX);
+            this.position.setY(newY);
+            this.facing = newFacing;
         }
     }
 
     // Robot turns left by moving forward by one cell and the turning radius
     public void turnLeft() {
+        double newX = this.position.getXInt();
+        double newY = this.position.getYInt();
+        Facing newFacing = this.facing;
+
         if (this.facing == Facing.NORTH) {
-            this.position.setY(this.position.getYInt() + 1);
-            this.position.setX(this.position.getXInt() - turningRadius);
-            this.facing = Facing.WEST;
+            newY += 1;
+            newX -= turningRadius;
+            newFacing = Facing.WEST;
         } else if (this.facing == Facing.WEST) {
-            this.position.setX(this.position.getXInt() - 1);
-            this.position.setY(this.position.getYInt() - turningRadius);
-            this.facing = Facing.SOUTH;
+            newX -= 1;
+            newY -= turningRadius;
+            newFacing = Facing.SOUTH;
         } else if (this.facing == Facing.SOUTH) {
-            this.position.setY(this.position.getYInt() - 1);
-            this.position.setX(this.position.getXInt() + turningRadius);
-            this.facing = Facing.EAST;
+            newY -= 1;
+            newX += turningRadius;
+            newFacing = Facing.EAST;
         } else if (this.facing == Facing.EAST) {
-            this.position.setX(this.position.getXInt() + 1);
-            this.position.setY(this.position.getYInt() + turningRadius);
-            this.facing = Facing.NORTH;
+            newX += 1;
+            newY += turningRadius;
+            newFacing = Facing.NORTH;
+        }
+        
+        if (isWithinBounds(newX, newY)) {
+            this.position.setX(newX);
+            this.position.setY(newY);
+            this.facing = newFacing;
         }
     }
-
-
 
     // Robot rotates right in place (Spot Turn)
     public void rotateRight() {
@@ -144,46 +179,7 @@ public class Robot {
         }
     }
 
-    // Reverse logic (To be implemented)
-    // Robot reverses left by moving backward by one cell and the turning radius
-    public void reverseLeft() {
-        if (this.facing == Facing.NORTH) {
-            this.position.setY(this.position.getYInt() - 1);
-            this.position.setX(this.position.getXInt() - turningRadius);
-            this.facing = Facing.EAST;
-        } else if (this.facing == Facing.EAST) {
-            this.position.setX(this.position.getXInt() - 1);
-            this.position.setY(this.position.getYInt() + turningRadius);
-            this.facing = Facing.SOUTH;
-        } else if (this.facing == Facing.SOUTH) {
-            this.position.setY(this.position.getYInt() + 1);
-            this.position.setX(this.position.getXInt() + turningRadius);
-            this.facing = Facing.WEST;
-        } else if (this.facing == Facing.WEST) {
-            this.position.setX(this.position.getXInt() + 1);
-            this.position.setY(this.position.getYInt() - turningRadius);
-            this.facing = Facing.NORTH;
-        }
-    }
-
-    // Robot reverses right by moving backward by one cell and the turning radius
-    public void reverseRight() {
-        if (this.facing == Facing.NORTH) {
-            this.position.setY(this.position.getYInt() - 1);
-            this.position.setX(this.position.getXInt() + turningRadius);
-            this.facing = Facing.WEST;
-        } else if (this.facing == Facing.WEST) {
-            this.position.setX(this.position.getXInt() + 1);
-            this.position.setY(this.position.getYInt() + turningRadius);
-            this.facing = Facing.SOUTH;
-        } else if (this.facing == Facing.SOUTH) {
-            this.position.setY(this.position.getYInt() + 1);
-            this.position.setX(this.position.getXInt() - turningRadius);
-            this.facing = Facing.EAST;
-        } else if (this.facing == Facing.EAST) {
-            this.position.setX(this.position.getXInt() - 1);
-            this.position.setY(this.position.getYInt() - turningRadius);
-            this.facing = Facing.NORTH;
-        }
-    }
+    // Reverse logic (To be implemented) - Not used but good to safeguard
+    public void reverseLeft() { return; }
+    public void reverseRight() { return; }
 }

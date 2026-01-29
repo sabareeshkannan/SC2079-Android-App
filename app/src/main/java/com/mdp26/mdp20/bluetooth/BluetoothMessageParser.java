@@ -52,18 +52,10 @@ public interface BluetoothMessageParser extends Function<String, BluetoothMessag
                             // However, the previous implementation used tryGetIntParams for 3 params.
                             // Let's infer direction from string if it's not a number.
                             int dir = 0;
-                             try {
+                            try {
                                 dir = Integer.parseInt(params[3].trim());
                             } catch (NumberFormatException e) {
-                                // parse N/S/E/W
-                                String dStr = params[3].trim().toUpperCase();
-                                dir = switch(dStr) {
-                                    case "N", "NORTH" -> 0; // Mapping: 0=North, 1=East, 2=South, 3=West
-                                    case "E", "EAST" -> 1;
-                                    case "S", "SOUTH" -> 2;
-                                    case "W", "WEST" -> 3;
-                                    default -> 0;
-                                };
+                                dir = parseDirection(params[3].trim());
                             }
                             ret = BluetoothMessage.ofRobotPositionMessage(msg, x, y, dir);
                         } catch (Exception e) {
@@ -75,8 +67,20 @@ public interface BluetoothMessageParser extends Function<String, BluetoothMessag
                 }
                 case "TARGET", "IMAGE-REC" -> {
                     // TARGET,<ObstacleID>,<TargetID>
+                    // TARGET,<ObstacleID>,<TargetID>,<Direction> (Optional)
                     int[] intParams = tryGetIntParams(params, 2);
-                    ret = BluetoothMessage.ofTargetFoundMessage(msg, intParams[0], intParams[1]);
+                    if (params.length > 3) {
+                         // Attempt to parse direction
+                         int dir = -1;
+                         try {
+                              dir = Integer.parseInt(params[3].trim());
+                         } catch (NumberFormatException e) {
+                              dir = parseDirection(params[3].trim());
+                         }
+                         ret = BluetoothMessage.ofTargetFoundMessage(msg, intParams[0], intParams[1], dir);
+                    } else {
+                         ret = BluetoothMessage.ofTargetFoundMessage(msg, intParams[0], intParams[1]);
+                    }
                 }
                 default -> ret = BluetoothMessage.ofPlainStringMessage(msg);
             }
@@ -107,5 +111,15 @@ public interface BluetoothMessageParser extends Function<String, BluetoothMessag
 
     public static BluetoothMessageParser ofDefault() {
         return DEFAULT;
+    }
+
+    private static int parseDirection(String dStr) {
+        return switch(dStr.toUpperCase()) {
+            case "N", "NORTH" -> 1;
+            case "E", "EAST" -> 2;
+            case "S", "SOUTH" -> 3;
+            case "W", "WEST" -> 4;
+            default -> 1;
+        };
     }
 }
