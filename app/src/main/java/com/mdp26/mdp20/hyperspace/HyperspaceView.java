@@ -3,7 +3,10 @@ package com.mdp26.mdp20.hyperspace;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.LinearGradient;
 import android.graphics.Paint;
+import android.graphics.RadialGradient;
+import android.graphics.Shader;
 import android.util.AttributeSet;
 import android.view.View;
 
@@ -19,14 +22,22 @@ public class HyperspaceView extends View {
     private final List<Star> stars = new ArrayList<>();
     private final Random random = new Random();
     private final Paint paint = new Paint();
+    private final Paint glowPaint = new Paint();
+    private final Paint backgroundPaint = new Paint();
+    private final Paint vignettePaint = new Paint();
     private float warpFactor = 0.0f; // 0.0 to 1.0 (1.0 = full warp)
     private float centerX, centerY;
     private long lastTime = 0;
+    private boolean idleTwinkle = true;
+    private long idleLastTime = 0;
 
     public HyperspaceView(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
         paint.setColor(Color.WHITE);
         paint.setAntiAlias(true);
+        glowPaint.setAntiAlias(true);
+        backgroundPaint.setAntiAlias(true);
+        vignettePaint.setAntiAlias(true);
         // Initialize stars
         for (int i = 0; i < 200; i++) {
             resetStar(new Star());
@@ -38,14 +49,31 @@ public class HyperspaceView extends View {
         super.onSizeChanged(w, h, oldw, oldh);
         centerX = w / 2f;
         centerY = h / 2f;
+        int bgStart = Color.rgb(3, 6, 16);
+        int bgEnd = Color.rgb(2, 2, 8);
+        backgroundPaint.setShader(new LinearGradient(
+                0, 0, 0, h,
+                bgStart,
+                bgEnd,
+                Shader.TileMode.CLAMP
+        ));
+        int vignetteCenter = Color.argb(0, 0, 0, 0);
+        int vignetteEdge = Color.argb(180, 0, 0, 0);
+        vignettePaint.setShader(new RadialGradient(
+                centerX, centerY,
+                Math.max(w, h) * 0.75f,
+                vignetteCenter,
+                vignetteEdge,
+                Shader.TileMode.CLAMP
+        ));
     }
 
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
         
-        // Background color
-        canvas.drawColor(getContext().getColor(R.color.bg_dark)); // Should be deep space blue
+        // Background
+        canvas.drawRect(0, 0, getWidth(), getHeight(), backgroundPaint);
 
         long now = System.currentTimeMillis();
         float deltaTime = (lastTime == 0) ? 0 : (now - lastTime) / 1000f;
@@ -75,15 +103,31 @@ public class HyperspaceView extends View {
 
             star.pz = star.z;
 
-            // Draw trail if moving fast (warp)
-            paint.setStrokeWidth(warpFactor * 5 + 2);
-            paint.setAlpha((int) (255 * (1 - star.z / 1000f)));
+            float depth = 1 - (star.z / 1000f);
+            float size = (star.size + depth * 2.5f);
+            float twinkle = 0.75f + (float) Math.sin(now * 0.004f + star.twinklePhase) * 0.25f;
+            int alpha = (int) (255 * star.baseAlpha * twinkle * (0.35f + depth));
+            if (alpha < 10) alpha = 10;
 
             if (px >= 0 && px <= getWidth() && py >= 0 && py <= getHeight()) {
                 if (warpFactor > 0.1f) {
+                    float stroke = size * (1.2f + warpFactor * 1.6f);
+                    paint.setStrokeWidth(stroke);
+                    paint.setColor(star.color);
+                    paint.setAlpha(alpha);
                     canvas.drawLine(ppx, ppy, px, py, paint);
+
+                    glowPaint.setColor(star.color);
+                    glowPaint.setAlpha((int) (alpha * 0.6f));
+                    canvas.drawCircle(px, py, size * 1.8f, glowPaint);
                 } else {
-                    canvas.drawCircle(px, py, 2, paint);
+                    paint.setColor(star.color);
+                    paint.setAlpha(alpha);
+                    canvas.drawCircle(px, py, size, paint);
+
+                    glowPaint.setColor(star.color);
+                    glowPaint.setAlpha((int) (alpha * 0.4f));
+                    canvas.drawCircle(px, py, size * 2.2f, glowPaint);
                 }
             } else {
                 // Out of bounds, reset
@@ -91,8 +135,16 @@ public class HyperspaceView extends View {
             }
         }
 
-        if (warpFactor > 0) {
-            invalidate(); // Animate
+        canvas.drawRect(0, 0, getWidth(), getHeight(), vignettePaint);
+
+        if (warpFactor > 0.02f || idleTwinkle) {
+            if (warpFactor <= 0.02f) {
+                if (now - idleLastTime < 50) {
+                    return;
+                }
+                idleLastTime = now;
+            }
+            postInvalidateOnAnimation(); // Animate
         }
     }
 
@@ -101,6 +153,21 @@ public class HyperspaceView extends View {
         star.y = (random.nextFloat() - 0.5f) * getHeight() * 10;
         star.z = 1000; // far away
         star.pz = star.z;
+        star.size = 0.8f + random.nextFloat() * 1.6f;
+        star.baseAlpha = 0.45f + random.nextFloat() * 0.55f;
+        star.twinklePhase = random.nextFloat() * (float) Math.PI * 2f;
+        float hue;
+        float roll = random.nextFloat();
+        if (roll < 0.15f) {
+            hue = 200f + random.nextFloat() * 20f; // cyan-blue
+        } else if (roll < 0.30f) {
+            hue = 40f + random.nextFloat() * 15f; // warm star
+        } else {
+            hue = 0f; // white
+        }
+        float sat = (hue == 0f) ? 0f : (0.25f + random.nextFloat() * 0.35f);
+        float val = 0.85f + random.nextFloat() * 0.15f;
+        star.color = Color.HSVToColor(new float[] { hue, sat, val });
         if (stars.size() < 200) stars.add(star);
     }
 
@@ -111,5 +178,9 @@ public class HyperspaceView extends View {
 
     private static class Star {
         float x, y, z, pz;
+        float size;
+        float baseAlpha;
+        float twinklePhase;
+        int color;
     }
 }

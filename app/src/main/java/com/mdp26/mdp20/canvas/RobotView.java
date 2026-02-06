@@ -16,13 +16,10 @@ import com.mdp26.mdp20.R;
 
 public class RobotView extends View {
     private static final String TAG = "RobotView";
-    private final Paint startRegionPaint = new Paint();
-    private final Paint highlightPaint = new Paint();
+    private final Paint robotBodyPaint = new Paint();
+    private final Paint directionPaint = new Paint();
     private Grid grid;
-    private Bitmap robotFacingNorth;
-    private Bitmap robotFacingEast;
-    private Bitmap robotFacingSouth;
-    private Bitmap robotFacingWest;
+    // Bitmaps removed
     private int cellSize;  // Dynamically calculated
     private int offsetX, offsetY; // To align with the grid
     private Robot robot;
@@ -33,18 +30,15 @@ public class RobotView extends View {
     }
 
     private void init() {
-        // Load the robot PNG from resources
-        robotFacingNorth = BitmapFactory.decodeResource(getResources(), R.drawable.robot_face_up);
-        robotFacingEast = BitmapFactory.decodeResource(getResources(), R.drawable.robot_face_right);
-        robotFacingSouth = BitmapFactory.decodeResource(getResources(), R.drawable.robot_face_down);
-        robotFacingWest = BitmapFactory.decodeResource(getResources(), R.drawable.robot_face_left);
+        // Robot Body Paint
+        robotBodyPaint.setColor(Color.GRAY);
+        robotBodyPaint.setStyle(Paint.Style.FILL);
 
-        startRegionPaint.setStrokeWidth(4);
-        startRegionPaint.setStyle(Paint.Style.STROKE);
+        // Direction Indicator Paint
+        directionPaint.setColor(Color.RED);
+        directionPaint.setStyle(Paint.Style.FILL);
 
-        // Highlight Paint
-        highlightPaint.setColor(Color.argb(80, 0, 255, 255)); // Semi-transparent Cyan
-        highlightPaint.setStyle(Paint.Style.FILL);
+
     }
 
     @Override
@@ -79,21 +73,27 @@ public class RobotView extends View {
         int right = left + robotWidth;
         int bottom = top + robotHeight;
 
-        // Choose the correct robot facing bitmap
-        Bitmap currentRobotBitmap = switch (robot.getFacing()) {
-            case NORTH -> robotFacingNorth;
-            case EAST -> robotFacingEast;
-            case SOUTH -> robotFacingSouth;
-            case WEST -> robotFacingWest;
-            case SKIP -> null;
-        };
+        // Draw the robot body as a rectangle
+        // Draw the robot body as a rectangle
+        canvas.drawRect(left, top, right, bottom, robotBodyPaint);
 
-        // Draw highlight under the robot
-        canvas.drawRect(left, top, right, bottom, highlightPaint);
+        int stripThickness = cellSize / 5;
 
-        // Draw the scaled and centered robot bitmap
-        if (currentRobotBitmap != null) {
-            canvas.drawBitmap(currentRobotBitmap, null, new Rect(left, top, right, bottom), null);
+        switch (robot.getFacing()) {
+            case NORTH:
+                canvas.drawRect(left, top, right, top + stripThickness, directionPaint);
+                break;
+            case EAST:
+                canvas.drawRect(right - stripThickness, top, right, bottom, directionPaint);
+                break;
+            case SOUTH:
+                canvas.drawRect(left, bottom - stripThickness, right, bottom, directionPaint);
+                break;
+            case WEST:
+                canvas.drawRect(left, top, left + stripThickness, bottom, directionPaint);
+                break;
+            case SKIP:
+                break;
         }
     }
 
