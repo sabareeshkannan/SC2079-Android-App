@@ -102,9 +102,9 @@
             android:id="@+id/bottomControls"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:background="@color/bg_card_light"
-            android:paddingTop="12dp"
-            android:paddingBottom="12dp"
+            android:background="@drawable/bg_panel_tactical"
+            android:paddingTop="16dp"
+            android:paddingBottom="16dp"
             android:elevation="16dp" 
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -132,19 +132,20 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="STATUS:"
+                    android:text="SYSTEM STATUS:"
                     android:textSize="13sp"
                     android:fontFamily="sans-serif-medium"
                     android:textColor="@color/text_secondary"
+                    android:letterSpacing="0.1"
                     android:layout_marginEnd="6dp"/>
 
                 <TextView
                     android:id="@+id/robotStatusDynamic"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="WAITING"
+                    android:text="STANDBY"
                     android:textSize="15sp"
-                    android:fontFamily="sans-serif-black"
+                    android:fontFamily="monospace"
                     android:textColor="@color/primary"/>
             </LinearLayout>
 
@@ -218,8 +219,8 @@
                     android:layout_weight="1"
                     android:layout_marginEnd="8dp"
                     android:text="@string/initialize_robot"
-                    android:background="@drawable/btn_primary_pill"
-                    android:textColor="@color/white"
+                    android:background="@drawable/selector_btn_holo_blue"
+                    android:textColor="@color/neon_blue"
                     android:textAllCaps="false"
                     android:textSize="15sp"
                     android:textStyle="bold"
@@ -232,8 +233,8 @@
                     android:layout_weight="1"
                     android:layout_marginStart="8dp"
                     android:text="@string/send_data"
-                    android:background="@drawable/btn_secondary_pill"
-                    android:textColor="@color/primary"
+                    android:background="@drawable/selector_btn_holo_green"
+                    android:textColor="@color/neon_green"
                     android:textAllCaps="false"
                     android:textSize="15sp"
                     android:textStyle="bold"
@@ -248,6 +249,8 @@
                 android:layout_marginTop="16dp"
                 android:columnCount="3"
                 android:rowCount="2"
+                android:background="@drawable/btn_dpad_neumorphic"
+                android:padding="4dp"
                 app:layout_constraintTop_toBottomOf="@id/actionButtons"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent">
@@ -260,7 +263,7 @@
                     android:src="@drawable/ic_turn_left_arc"
                     android:background="?attr/selectableItemBackgroundBorderless"
                     android:scaleType="fitCenter"
-                    android:padding="6dp"
+                    android:padding="10dp"
                     app:tint="@color/primary"/>
 
                 <ImageButton
@@ -270,7 +273,7 @@
                     android:src="@drawable/ic_arrow_up"
                     android:background="?attr/selectableItemBackgroundBorderless"
                     android:scaleType="fitCenter"
-                    android:padding="6dp"
+                    android:padding="10dp"
                     app:tint="@color/primary"/>
 
                 <ImageButton
@@ -280,7 +283,7 @@
                     android:src="@drawable/ic_turn_right_arc"
                     android:background="?attr/selectableItemBackgroundBorderless"
                     android:scaleType="fitCenter"
-                    android:padding="6dp"
+                    android:padding="10dp"
                     app:tint="@color/primary"/>
 
                 <!-- Row 1: Spot Turns & Backward -->
@@ -291,7 +294,7 @@
                     android:src="@drawable/ic_rotate_left"
                     android:background="?attr/selectableItemBackgroundBorderless"
                     android:scaleType="fitCenter"
-                    android:padding="6dp"
+                    android:padding="10dp"
                     app:tint="@color/primary"/>
 
                 <ImageButton
@@ -301,7 +304,7 @@
                     android:src="@drawable/ic_arrow_down"
                     android:background="?attr/selectableItemBackgroundBorderless"
                     android:scaleType="fitCenter"
-                    android:padding="6dp"
+                    android:padding="10dp"
                     app:tint="@color/primary"/>
 
                 <ImageButton
@@ -311,12 +314,12 @@
                     android:src="@drawable/ic_rotate_right"
                     android:background="?attr/selectableItemBackgroundBorderless"
                     android:scaleType="fitCenter"
-                    android:padding="6dp"
+                    android:padding="10dp"
                     app:tint="@color/primary"/>
 
             </GridLayout>
             
-            <androidx.appcompat.widget.AppCompatButton
+                <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/btnRobotStart"
                 android:layout_width="0dp"
                 android:layout_height="50dp"
@@ -324,8 +327,8 @@
                 android:layout_marginTop="12dp"
                 android:layout_marginBottom="12dp"
                 android:text="@string/start_robot"
-                android:background="@drawable/btn_primary_pill"
-                android:textColor="@color/white"
+                android:background="@drawable/selector_btn_holo_red"
+                android:textColor="@color/neon_red"
                 android:textAllCaps="true"
                 android:textSize="16sp"
                 android:textStyle="bold"

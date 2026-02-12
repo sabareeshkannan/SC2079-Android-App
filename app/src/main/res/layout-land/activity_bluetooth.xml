@@ -69,15 +69,18 @@
             app:tint="@color/text_secondary" />
 
         <!-- Status Compact -->
-        <LinearLayout
-            android:id="@+id/statusLayout"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_marginTop="12dp"
-            app:layout_constraintTop_toBottomOf="@id/textGroupBadge"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent">
+        <!-- Lightsaber Status Indicator -->
+
+    <LinearLayout
+        android:id="@+id/statusLayout"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingHorizontal="24dp"
+        android:layout_marginTop="12dp"
+        app:layout_constraintTop_toBottomOf="@id/textGroupBadge"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
 
             <LinearLayout
                 android:layout_width="wrap_content"
@@ -111,73 +114,120 @@
                 android:textColor="@color/text_hint" />
         </LinearLayout>
 
-        <!-- Buttons at Bottom -->
-        <LinearLayout
+    <!-- Lightsaber Status Indicator -->
+    <LinearLayout
+        android:id="@+id/saberLayout"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:paddingHorizontal="24dp"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintBottom_toTopOf="@+id/buttonContainer"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <ImageView
+            android:id="@+id/saberHandle"
+            android:layout_width="60dp"
+            android:layout_height="24dp"
+            android:src="@drawable/bg_lightsaber_handle"
+            android:contentDescription="Saber Handle"/>
+
+        <!-- Blade is initially width 0 -->
+        <View
+            android:id="@+id/saberBlade"
             android:layout_width="0dp"
+            android:layout_height="16dp"
+            android:background="@drawable/bg_lightsaber_blade"
+            android:layout_marginStart="-2dp"/>
+
+    </LinearLayout>
+
+    <!-- Buttons at Bottom -->
+    <LinearLayout
+        android:id="@+id/buttonContainer"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <!-- Scan & Discover Row -->
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent">
-
-            <!-- Scan & Discover Row -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginBottom="8dp">
-
-                <androidx.appcompat.widget.AppCompatButton
-                    android:id="@+id/btnScan"
-                    android:layout_width="0dp"
-                    android:layout_height="40dp"
-                    android:layout_weight="1"
-                    android:text="SCAN"
-                    android:textSize="11sp"
-                    android:textColor="@color/black"
-                    android:background="@drawable/btn_primary_pill"
-                    android:layout_marginEnd="4dp"
-                    android:textStyle="bold"/>
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="40dp"
-                    android:layout_weight="1"
-                    android:background="@drawable/btn_secondary_pill"
-                    android:gravity="center"
-                    android:orientation="horizontal"
-                    android:layout_marginStart="4dp">
-                     <androidx.appcompat.widget.SwitchCompat
-                        android:id="@+id/switchDiscoverable"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        app:thumbTint="@color/primary"
-                        app:trackTint="@color/primary_dark"/>
-                </LinearLayout>
-            </LinearLayout>
+            android:orientation="horizontal"
+            android:layout_marginBottom="8dp">
 
             <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/btnBigRed"
-                android:layout_width="match_parent"
-                android:layout_height="45dp"
-                android:text="LAUNCH"
-                android:background="@drawable/btn_primary_pill"
-                android:textColor="@color/white"
-                android:textSize="14sp"
-                android:textStyle="bold"
-                android:elevation="4dp"/>
-
-            <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/btnCanvas"
-                android:layout_width="match_parent"
-                android:layout_height="40dp"
-                android:layout_marginTop="8dp"
-                android:text="@string/canvas"
-                android:background="@drawable/btn_secondary_pill"
-                android:textColor="@color/primary"
-                android:textSize="12sp"
+                android:id="@+id/btnScan"
+                android:layout_width="0dp"
+                android:layout_height="60dp"
+                android:layout_weight="1"
+                android:text="SCAN DEVICES"
+                android:textSize="11sp"
+                android:textColor="@color/neon_blue"
+                android:background="@drawable/selector_btn_holo_blue"
+                android:layout_marginEnd="4dp"
+                android:paddingHorizontal="4dp"
                 android:textStyle="bold"/>
+
+            <LinearLayout
+                android:id="@+id/layoutDiscoverable"
+                android:layout_width="0dp"
+                android:layout_height="60dp"
+                android:layout_weight="1"
+                android:background="@drawable/selector_btn_holo_green"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:layout_marginStart="4dp"
+                android:paddingHorizontal="4dp">
+                
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="DISCOVERABLE"
+                    android:textColor="@color/neon_green"
+                    android:textSize="9sp"
+                    android:textStyle="bold"
+                    android:gravity="center_vertical"/>
+
+                 <androidx.appcompat.widget.SwitchCompat
+                    android:id="@+id/switchDiscoverable"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:thumbTint="@color/neon_green"
+                    app:trackTint="#33ffffff"/>
+            </LinearLayout>
         </LinearLayout>
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btnBigRed"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:text="INITIALISE LAUNCH"
+            android:background="@drawable/selector_btn_holo_red"
+            android:textColor="@color/neon_red"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:letterSpacing="0.05"
+            android:stateListAnimator="@animator/button_press_scale"
+            android:elevation="4dp"/>
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btnCanvas"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_marginTop="8dp"
+            android:text="@string/canvas"
+            android:background="@drawable/selector_btn_holo_blue"
+            android:textColor="@color/neon_blue"
+            android:textSize="12sp"
+            android:textStyle="bold"/>
+    </LinearLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

@@ -47,8 +47,8 @@ public class BluetoothActivity extends AppCompatActivity {
     private static final int BLUETOOTH_PERMISSIONS_REQUEST_CODE = 96;
     private static final int DISCOVERABLE_DURATION = 300; // 5 minutes
     private MyApplication myApp; // my context for "static" vars
-    private BroadcastReceiver infoReceiver; //main receiver for all bt intents
-    private BroadcastReceiver msgReceiver; //receive bluetooth messages
+    private BroadcastReceiver infoReceiver; // main receiver for all bt intents
+    private BroadcastReceiver msgReceiver; // receive bluetooth messages
     private BluetoothDeviceAdapter bluetoothDeviceAdapter; // to inflate recycler view
 
     private ActivityResultLauncher<Intent> requestEnableBluetooth; // to enable bluetooth
@@ -59,10 +59,11 @@ public class BluetoothActivity extends AppCompatActivity {
     private LinearLayout connectedPanel;
     private TextView connectedText;
     private SwitchCompat discoverSwitch;
+    private View saberBlade; // The neon blade view
+    private android.animation.ValueAnimator saberAnimator;
 
     // for some sound effects
     // private MediaPlayer btConnectedSfx = null;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,7 +77,7 @@ public class BluetoothActivity extends AppCompatActivity {
         myApp = (MyApplication) getApplication();
 
         // request bluetooth permissions
-        String[] permissions = new String[]{
+        String[] permissions = new String[] {
                 Manifest.permission.BLUETOOTH_SCAN,
                 Manifest.permission.BLUETOOTH_CONNECT,
                 Manifest.permission.BLUETOOTH_ADVERTISE,
@@ -102,36 +103,47 @@ public class BluetoothActivity extends AppCompatActivity {
         requestDiscoverable = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
                 result -> {
-                    // Note: some devices return the duration (seconds) as result code, others RESULT_OK (1) or CANCELED (0)
-                    if (result.getResultCode() == DISCOVERABLE_DURATION || result.getResultCode() == Activity.RESULT_OK) {
+                    // Note: some devices return the duration (seconds) as result code, others
+                    // RESULT_OK (1) or CANCELED (0)
+                    if (result.getResultCode() == DISCOVERABLE_DURATION
+                            || result.getResultCode() == Activity.RESULT_OK) {
                         Log.d(TAG, "Bluetooth Discovery on for " + DISCOVERABLE_DURATION + "s");
                         // Ensure switch is checked visually (in case it wasn't)
-                        if (discoverSwitch != null) discoverSwitch.setChecked(true);
-                        
+                        if (discoverSwitch != null)
+                            discoverSwitch.setChecked(true);
+
+                        // Animate Saber Extend
+                        animateLightsaber(true);
+
                         // Auto-turn off switch after duration
                         new android.os.Handler(android.os.Looper.getMainLooper()).postDelayed(() -> {
                             if (discoverSwitch != null) {
                                 discoverSwitch.setChecked(false);
+                                animateLightsaber(false); // Retract
                                 Toast.makeText(this, "Discoverable mode disabled", Toast.LENGTH_SHORT).show();
                             }
                         }, DISCOVERABLE_DURATION * 1000L);
                     } else {
                         // User cancelled or failure
                         Log.d(TAG, "Bluetooth Discovery cancelled/failed");
-                        if (discoverSwitch != null) discoverSwitch.setChecked(false);
+                        if (discoverSwitch != null)
+                            discoverSwitch.setChecked(false);
+                        animateLightsaber(false); // Ensure retracted
                     }
                 });
 
         // register broadcast receivers for bluetooth context
         infoReceiver = new BluetoothInfoReceiver(this::onBluetoothInfoReceived);
         for (IntentFilter intentFilter : BluetoothInfoReceiver.DEFAULT_FILTERS) {
-            // note: needs to be RECEIVER_EXPORTED for scan mode change to be broadcast, not sure why
+            // note: needs to be RECEIVER_EXPORTED for scan mode change to be broadcast, not
+            // sure why
             getApplicationContext().registerReceiver(infoReceiver, intentFilter, RECEIVER_EXPORTED);
         }
 
         // register message receiver
         msgReceiver = new BluetoothMessageReceiver(BluetoothMessageParser.ofDefault(), this::onMsgReceived);
-        getApplicationContext().registerReceiver(msgReceiver, new IntentFilter(BluetoothMessageReceiver.ACTION_MSG_READ), RECEIVER_NOT_EXPORTED);
+        getApplicationContext().registerReceiver(msgReceiver,
+                new IntentFilter(BluetoothMessageReceiver.ACTION_MSG_READ), RECEIVER_NOT_EXPORTED);
 
         LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         boolean isGpsEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
@@ -155,38 +167,100 @@ public class BluetoothActivity extends AppCompatActivity {
         });
         recyclerView.setAdapter(bluetoothDeviceAdapter);
         findViewById(R.id.btnScan).setOnClickListener(view -> refreshDeviceList());
-        
+
         // Discoverability Switch Logic
         discoverSwitch = findViewById(R.id.switchDiscoverable);
         discoverSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
             // Only trigger on user interaction
             if (buttonView.isPressed() && isChecked) {
-                 enableDeviceDiscovery();
+                enableDeviceDiscovery();
             } else if (buttonView.isPressed() && !isChecked) {
-                // User turned OFF manually. We can't really "stop" discoverability easily via Intent, 
-                // but for UI consistency we accept the state.
+                // User turned OFF manually
+                animateLightsaber(false);
             }
         });
-        
+
         android.widget.ImageButton themeToggle = findViewById(R.id.btnThemeToggle);
         themeToggle.setOnClickListener(v -> toggleTheme());
 
         Button canvasButton = findViewById(R.id.btnCanvas);
         canvasButton.setVisibility(View.VISIBLE); // Allow direct access (Failsafe)
         canvasButton.setOnClickListener(view -> startActivity(new Intent(this, CanvasActivity.class)));
-        
+
         // Launch Button Logic
         findViewById(R.id.btnBigRed).setOnClickListener(v -> {
             startActivity(new Intent(BluetoothActivity.this, HyperspaceActivity.class));
         });
 
-
         connectedPanel = findViewById(R.id.statusLayout);
         if (myApp.btConnection() == null)
-            connectedPanel.setVisibility(View.INVISIBLE); //set invisible if no connection
+            connectedPanel.setVisibility(View.INVISIBLE); // set invisible if no connection
         receivedMsgView = findViewById(R.id.textReceivedMsg);
         receivedMsgView.setText("Received Messages: ");
         connectedText = findViewById(R.id.textConnectedStatus);
+
+        saberBlade = findViewById(R.id.saberBlade);
+    }
+
+    private void animateLightsaber(boolean expand) {
+        if (saberBlade == null)
+            return;
+
+        // Cancel previous animation
+        if (saberAnimator != null && saberAnimator.isRunning()) {
+            saberAnimator.cancel();
+        }
+
+        int maxWidth = ((View) saberBlade.getParent()).getWidth() - findViewById(R.id.saberHandle).getWidth();
+        // A bit rough estimation, better to measure properly but parent width minus
+        // handle is safe enough bound for now
+        // actually layout pass might not be ready if called too early, but usually fine
+        // for click events.
+        // Safer: Get screen width or simple large number since it is constrained by
+        // layout if we use match_constraint (but here we effectively modify width)
+
+        // Let's use a fixed max width based on display metrics or parent view for
+        // smoother visual.
+        // Or simply:
+        final int targetWidth = expand ? 1000 : 0; // 1000px is enough to go off screen usually, or use DisplayMetrics
+
+        // Better approach: Measure parent
+        // Use View.post to ensure layout is complete if width is 0
+        saberBlade.post(() -> {
+            View parent = (View) saberBlade.getParent();
+            if (parent == null)
+                return;
+
+            int parentWidth = parent.getWidth();
+            int handleWidth = findViewById(R.id.saberHandle).getWidth();
+            int padding = parent.getPaddingStart() + parent.getPaddingEnd(); // Account for parent padding
+
+            // Calculate available width for the blade
+            int finalWidth = expand ? (parentWidth - handleWidth - padding) : 0;
+
+            if (finalWidth < 0)
+                finalWidth = 0; // Prevent negative width
+
+            int currentWidth = saberBlade.getWidth();
+
+            // If already at target, skip animation (unless we want to force re-anim?)
+            if (currentWidth == finalWidth)
+                return;
+
+            saberAnimator = android.animation.ValueAnimator.ofInt(currentWidth, finalWidth);
+            saberAnimator.setDuration(400); // 400ms extension
+            saberAnimator.setInterpolator(new android.view.animation.AccelerateDecelerateInterpolator());
+            saberAnimator.addUpdateListener(animation -> {
+                int val = (int) animation.getAnimatedValue();
+                LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) saberBlade.getLayoutParams();
+                params.width = val;
+                saberBlade.setLayoutParams(params);
+            });
+            saberAnimator.start();
+        });
+
+        // Play sound effect if expanded? (Optional, skipping for now as per "clean"
+        // request)
     }
 
     @Override
@@ -199,7 +273,8 @@ public class BluetoothActivity extends AppCompatActivity {
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+            @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == BLUETOOTH_PERMISSIONS_REQUEST_CODE) {
             boolean allPermissionsGranted = true;
@@ -238,7 +313,6 @@ public class BluetoothActivity extends AppCompatActivity {
         bluetoothDeviceAdapter.initPairedDevices(myApp.btInterface().getBondedDevices());
         myApp.btInterface().scanForDevices();
     }
-
 
     // starts scanning / connecting to devices
     private void startBluetooth() {
@@ -287,14 +361,16 @@ public class BluetoothActivity extends AppCompatActivity {
                     // and also initiate reconnection
                     Toast.makeText(this, "Lost Connection. Retrying in 3s...", Toast.LENGTH_SHORT).show();
                     new android.os.Handler(android.os.Looper.getMainLooper()).postDelayed(() -> {
-                         Log.d(TAG, "Attempting auto-reconnect...");
-                         myApp.btInterface().connectAsClient(device);
+                        Log.d(TAG, "Attempting auto-reconnect...");
+                        myApp.btInterface().connectAsClient(device);
                     }, 3000);
                 } else {
                     // connection successful
-                    /*if (!btConnectedSfx.isPlaying()) {
-                        btConnectedSfx.start();
-                    }*/
+                    /*
+                     * if (!btConnectedSfx.isPlaying()) {
+                     * btConnectedSfx.start();
+                     * }
+                     */
                     connectedText.setText("Connected to " + device.getName());
                 }
                 connectedPanel.setVisibility(connected ? View.VISIBLE : View.INVISIBLE);
@@ -324,8 +400,7 @@ public class BluetoothActivity extends AppCompatActivity {
 
         // Apply new mode
         androidx.appcompat.app.AppCompatDelegate.setDefaultNightMode(
-            newMode ? androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_YES 
-                    : androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_NO
-        );
+                newMode ? androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_YES
+                        : androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_NO);
     }
 }

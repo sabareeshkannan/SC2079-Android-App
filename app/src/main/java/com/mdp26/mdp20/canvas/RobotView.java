@@ -13,14 +13,14 @@ import android.graphics.Color;
 import com.mdp26.mdp20.Facing;
 import com.mdp26.mdp20.R;
 
-
 public class RobotView extends View {
     private static final String TAG = "RobotView";
     private final Paint robotBodyPaint = new Paint();
+    private final Paint robotShadowPaint = new Paint();
     private final Paint directionPaint = new Paint();
     private Grid grid;
     // Bitmaps removed
-    private int cellSize;  // Dynamically calculated
+    private int cellSize; // Dynamically calculated
     private int offsetX, offsetY; // To align with the grid
     private Robot robot;
 
@@ -31,13 +31,17 @@ public class RobotView extends View {
 
     private void init() {
         // Robot Body Paint
-        robotBodyPaint.setColor(Color.GRAY);
+        // Robot Body Paint
+        robotBodyPaint.setColor(androidx.core.content.ContextCompat.getColor(getContext(), R.color.robot_body));
         robotBodyPaint.setStyle(Paint.Style.FILL);
 
-        // Direction Indicator Paint
-        directionPaint.setColor(Color.RED);
-        directionPaint.setStyle(Paint.Style.FILL);
+        // Robot Shadow Paint
+        robotShadowPaint.setColor(androidx.core.content.ContextCompat.getColor(getContext(), R.color.robot_shadow));
+        robotShadowPaint.setStyle(Paint.Style.FILL);
 
+        // Direction Indicator Paint
+        directionPaint.setColor(androidx.core.content.ContextCompat.getColor(getContext(), R.color.robot_direction));
+        directionPaint.setStyle(Paint.Style.FILL);
 
     }
 
@@ -60,8 +64,8 @@ public class RobotView extends View {
         super.onDraw(canvas);
 
         // Calculate new dimensions to fit the 20cm x 21cm robot in the grid
-        int robotWidth = cellSize * 2;  // Robot spans 2 grid cells in width
-        int robotHeight = (int) (cellSize * 2.1);  // Robot spans ~2.1 grid cells in height
+        int robotWidth = cellSize * 2; // Robot spans 2 grid cells in width
+        int robotHeight = (int) (cellSize * 2.1); // Robot spans ~2.1 grid cells in height
 
         // Calculate the position of the robot centered on its current grid cell
         int centerX = offsetX + (robot.getPosition().getXInt() * cellSize) + (cellSize / 2);
@@ -74,6 +78,11 @@ public class RobotView extends View {
         int bottom = top + robotHeight;
 
         // Draw the robot body as a rectangle
+        // Draw Shadow (Offset)
+        int shadowOffset = cellSize / 8;
+        canvas.drawRect(left + shadowOffset, top + shadowOffset, right + shadowOffset, bottom + shadowOffset,
+                robotShadowPaint);
+
         // Draw the robot body as a rectangle
         canvas.drawRect(left, top, right, bottom, robotBodyPaint);
 

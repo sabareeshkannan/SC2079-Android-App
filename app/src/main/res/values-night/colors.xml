@@ -3,66 +3,73 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
 
-    <!-- Deep Slate / Midnight Theme -->
-    <!-- Interstellar Command Palette (Dark Mode) -->
-    <color name="bg_dark">#0B0D17</color> <!-- Deep Space Blue -->
-    <color name="bg_darker">#050608</color>
-    <color name="bg_card">#151922</color> <!-- Lighter Space Blue -->
-    <color name="bg_card_light">#1F2937</color>
-    <color name="divider">#2D3748</color>
+    <!-- Empire / Dark Side Theme (Tactical/Holo) -->
+    <color name="bg_dark">#050505</color> <!-- Pure Black -->
+    <color name="bg_darker">#000000</color>
+    <color name="bg_card">#0A0A0A</color> <!-- Very Dark Grey -->
+    <color name="bg_card_light">#141414</color>
+    <color name="divider">#333333</color>
+
+    <!-- Holo Palette -->
+    <color name="neon_blue">#00EAFF</color>   <!-- Targeting Blue -->
+    <color name="neon_blue_glow">#2000EAFF</color>
+    <color name="neon_green">#00FF00</color>  <!-- Radar Green -->
+    <color name="neon_green_glow">#2000FF00</color>
+    <color name="neon_red">#FF0000</color>    <!-- Alert Red -->
+    <color name="neon_red_glow">#20FF0000</color>
+    
+    <color name="panel_grey">#1C1C1C</color>
 
     <!-- Branding Colors -->
-    <!-- Primary: Holographic Cyan -->
-    <color name="primary">#00F0FF</color>
-    <color name="primary_dark">#00B8CC</color>
-    <color name="primary_light">#80F7FF</color>
-    <color name="primary_glow">#00F0FF</color>
+    <color name="primary">#00EAFF</color>
+    <color name="primary_dark">#008CA3</color>
+    <color name="primary_light">#80F4FF</color>
+    <color name="primary_glow">#00EAFF</color>
     
-    <!-- Secondary: Nebula Purple -->
-    <color name="secondary">#7000FF</color>
-    <color name="secondary_dark">#4A00B3</color>
-    <color name="secondary_light">#A366FF</color>
-    <color name="secondary_glow">#BF80FF</color>
+    <color name="secondary">#FF0000</color>
+    <color name="secondary_dark">#990000</color>
+    <color name="secondary_light">#FF6666</color>
+    <color name="secondary_glow">#FF0000</color>
     
-    <!-- Accent: Warning Orange -->
-    <color name="accent">#FF5C00</color>
-    <color name="accent_dark">#CC4900</color>
-    <color name="accent_light">#FF8533</color>
+    <color name="accent">#FF9900</color>
+    <color name="accent_dark">#CC7A00</color>
+    <color name="accent_light">#FFB84D</color>
     
-    <!-- Tertiary: Alert Red -->
-    <color name="tertiary">#FF0055</color>
-    <color name="tertiary_light">#FF4D88</color>
+    <color name="tertiary">#FF0000</color>
+    <color name="tertiary_light">#FF4D4D</color>
     
-    <!-- Glassmorphism compatibility -->
     <color name="glass_bg">#1AFFFFFF</color>
-    <color name="glass_border">#33FFFFFF</color>
+    <color name="glass_border">#40FFFFFF</color>
     
-    <!-- Text colors -->
-    <color name="text_primary">#FFFFFF</color>
-    <color name="text_secondary">#8F9BB3</color>
-    <color name="text_hint">#4A5568</color>
-    <color name="text_glow">#00F0FF</color>
+    <!-- Text colors (High Contrast Tech) -->
+    <color name="text_primary">#E0E0E0</color>
+    <color name="text_secondary">#A0A0A0</color>
+    <color name="text_hint">#606060</color>
+    <color name="text_glow">#FFFFFF</color>
     
-    <!-- Status colors -->
-    <color name="status_success">#00FF9D</color> <!-- Neon Green -->
-    <color name="status_warning">#FFCC00</color>
-    <color name="status_error">#FF3B30</color>
+    <color name="status_success">#00FF00</color>
+    <color name="status_warning">#FF9900</color>
+    <color name="status_error">#FF0000</color>
     
-    <!-- Gradient colors -->
-    <color name="gradient_start">#0B0D17</color>
-    <color name="gradient_mid">#1A202C</color>
-    <color name="gradient_end">#151922</color>
+    <color name="gradient_start">#050505</color>
+    <color name="gradient_mid">#0A0A0A</color>
+    <color name="gradient_end">#141414</color>
 
-    <color name="button_pressed_grey">#4A5568</color>
+    <color name="button_pressed_grey">#333333</color>
 
     <!-- Canvas Specific Colors -->
-    <!-- Neon Colors for high contrast on dark bg -->
-    <color name="grid_line_red">#FF0055</color> <!-- Neon Red -->
-    <color name="grid_line_blue">#00F0FF</color> <!-- Neon Cyan -->
+    <color name="grid_line_red">#FF0000</color>
+    <color name="grid_line_blue">#00EAFF</color>
     
-    <color name="obstacle_body">#2C3E50</color>
+    <color name="obstacle_body">#333333</color>
     <color name="obstacle_selected">#FFFFFF</color> 
+    <color name="obstacle_facing">#FFFF00</color> <!-- Bright Yellow for visibility -->
+    <color name="obstacle_shadow">#80000000</color>
     
-    <color name="input_border">#2D3748</color>
-    <color name="input_bg">#151922</color>
+    <color name="robot_body">#E0E0E0</color> <!-- Silver -->
+    <color name="robot_direction">#00FF00</color> <!-- Bright Green -->
+    <color name="robot_shadow">#80000000</color>
+
+    <color name="input_border">#333333</color>
+    <color name="input_bg">#0A0A0A</color>
 </resources>

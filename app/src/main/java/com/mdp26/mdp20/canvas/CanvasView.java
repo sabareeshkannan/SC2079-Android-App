@@ -13,7 +13,7 @@ import com.mdp26.mdp20.Facing;
 
 public class CanvasView extends View {
     private final String TAG = "CanvasView";
-    private int cellSize;  // Calculated dynamically
+    private int cellSize; // Calculated dynamically
     private int offsetX, offsetY; // To center the grid
     private final Paint gridPaintRed = new Paint();
     private final Paint gridPaintBlue = new Paint();
@@ -24,6 +24,8 @@ public class CanvasView extends View {
     private final Paint facingPaint = new Paint();
     private final Paint targetPaint = new Paint();
     private final Paint startRegionPaint = new Paint();
+    private final Paint obstacleShadowPaint = new Paint();
+    private final Paint obstacleBorderPaint = new Paint();
     private Grid grid;
 
     public CanvasView(Context context, AttributeSet attrs) {
@@ -38,27 +40,42 @@ public class CanvasView extends View {
 
     private void init(Context context) {
         // Grid styling - Red
-        gridPaintRed.setColor(androidx.core.content.ContextCompat.getColor(context, com.mdp26.mdp20.R.color.grid_line_red));
+        gridPaintRed
+                .setColor(androidx.core.content.ContextCompat.getColor(context, com.mdp26.mdp20.R.color.grid_line_red));
         gridPaintRed.setStrokeWidth(2);
         gridPaintRed.setStyle(Paint.Style.STROKE);
 
         // Grid styling - Blue
-        gridPaintBlue.setColor(androidx.core.content.ContextCompat.getColor(context, com.mdp26.mdp20.R.color.grid_line_blue));
+        gridPaintBlue.setColor(
+                androidx.core.content.ContextCompat.getColor(context, com.mdp26.mdp20.R.color.grid_line_blue));
         gridPaintBlue.setStrokeWidth(2);
         gridPaintBlue.setStyle(Paint.Style.STROKE);
 
         // Label text styling
         textPaint.setColor(androidx.core.content.ContextCompat.getColor(context, com.mdp26.mdp20.R.color.text_primary));
-        textPaint.setTextSize(20);  // Adjust for readability
+        textPaint.setTextSize(20); // Adjust for readability
         textPaint.setTextAlign(Paint.Align.CENTER);
         textPaint.setTypeface(android.graphics.Typeface.create("sans-serif-medium", android.graphics.Typeface.NORMAL));
         textPaint.setFakeBoldText(true);
 
         // Obstacle styling
-        obstaclePaint.setColor(androidx.core.content.ContextCompat.getColor(context, com.mdp26.mdp20.R.color.obstacle_body));
+        // Obstacle styling
+        obstaclePaint
+                .setColor(androidx.core.content.ContextCompat.getColor(context, com.mdp26.mdp20.R.color.obstacle_body));
         obstaclePaint.setStyle(Paint.Style.FILL);
-        obstacleSelectedPaint.setColor(androidx.core.content.ContextCompat.getColor(context, com.mdp26.mdp20.R.color.obstacle_selected));
-        obstacleSelectedPaint.setStyle(Paint.Style.FILL);
+
+        obstacleSelectedPaint.setColor(
+                androidx.core.content.ContextCompat.getColor(context, com.mdp26.mdp20.R.color.obstacle_selected));
+        obstacleSelectedPaint.setStyle(Paint.Style.STROKE);
+        obstacleSelectedPaint.setStrokeWidth(4);
+
+        obstacleShadowPaint.setColor(
+                androidx.core.content.ContextCompat.getColor(context, com.mdp26.mdp20.R.color.obstacle_shadow));
+        obstacleShadowPaint.setStyle(Paint.Style.FILL);
+
+        obstacleBorderPaint.setColor(Color.DKGRAY); // Fallback, usually subtle
+        obstacleBorderPaint.setStyle(Paint.Style.STROKE);
+        obstacleBorderPaint.setStrokeWidth(2);
 
         // ID text styling (obstacle IDs)
         idPaint.setColor(androidx.core.content.ContextCompat.getColor(context, com.mdp26.mdp20.R.color.white));
@@ -68,18 +85,22 @@ public class CanvasView extends View {
         idPaint.setTextSize(16);
 
         // Target styling
-        targetPaint.setColor(androidx.core.content.ContextCompat.getColor(context, com.mdp26.mdp20.R.color.status_success));
+        targetPaint.setColor(
+                androidx.core.content.ContextCompat.getColor(context, com.mdp26.mdp20.R.color.status_success));
         targetPaint.setTextAlign(Paint.Align.CENTER);
         targetPaint.setTypeface(android.graphics.Typeface.create("sans-serif-black", android.graphics.Typeface.NORMAL));
         targetPaint.setFakeBoldText(true);
         targetPaint.setTextSize(21);
 
         // Facing indicator styling
-        facingPaint.setColor(androidx.core.content.ContextCompat.getColor(context, com.mdp26.mdp20.R.color.secondary)); 
+        // Facing indicator styling
+        facingPaint.setColor(
+                androidx.core.content.ContextCompat.getColor(context, com.mdp26.mdp20.R.color.obstacle_facing));
         facingPaint.setStyle(Paint.Style.FILL);
 
         // Initialize startRegionPaint
-        startRegionPaint.setColor(androidx.core.content.ContextCompat.getColor(context, com.mdp26.mdp20.R.color.accent));
+        startRegionPaint
+                .setColor(androidx.core.content.ContextCompat.getColor(context, com.mdp26.mdp20.R.color.accent));
         startRegionPaint.setStrokeWidth(4);
         startRegionPaint.setStyle(Paint.Style.STROKE);
     }
@@ -133,9 +154,9 @@ public class CanvasView extends View {
 
         // Draw the green boundary lines
         canvas.drawLine(left, bottom, right, bottom, startRegionPaint); // Bottom line (0,0) to (4,0)
-        canvas.drawLine(left, top, right, top, startRegionPaint);       // Top line (0,4) to (4,4)
-        canvas.drawLine(left, top, left, bottom, startRegionPaint);     // Left line (0,0) to (0,4)
-        canvas.drawLine(right, top, right, bottom, startRegionPaint);   // Right line (4,0) to (4,4)
+        canvas.drawLine(left, top, right, top, startRegionPaint); // Top line (0,4) to (4,4)
+        canvas.drawLine(left, top, left, bottom, startRegionPaint); // Left line (0,0) to (0,4)
+        canvas.drawLine(right, top, right, bottom, startRegionPaint); // Right line (4,0) to (4,4)
     }
 
     private void drawAxisLabels(Canvas canvas) {
@@ -151,50 +172,58 @@ public class CanvasView extends View {
             // "0" at x=0
             canvas.drawText(
                     String.valueOf(x),
-                    offsetX + (x * cellSize) + halfCell, 
-                    offsetY + (gridSize * cellSize) + 30,    
-                    textPaint
-            );
+                    offsetX + (x * cellSize) + halfCell,
+                    offsetY + (gridSize * cellSize) + 30,
+                    textPaint);
         }
 
         // Draw Y-axis labels (left of the grid)
         for (int y = 0; y < gridSize; y++) {
             // "0" at y=0, which is at the BOTTOM cell (index gridSize-1 visually)
             // But wait, our loop y=0 usually means the bottom-most coordinate?
-            // Let's check drawObstacles: y=0 is at `offsetY + (Grid.GRID_SIZE - 1 - y) * cellSize`
+            // Let's check drawObstacles: y=0 is at `offsetY + (Grid.GRID_SIZE - 1 - y) *
+            // cellSize`
             // So y=0 is the bottom cell.
-            
+
             float yPos = offsetY + ((gridSize - 1 - y) * cellSize) + halfCell + yLabelOffsetY;
-            
+
             canvas.drawText(
                     String.valueOf(y),
-                    offsetX - 30,  
-                    yPos,  
-                    textPaint
-            );
+                    offsetX - 30,
+                    yPos,
+                    textPaint);
         }
     }
 
     private void drawObstacles(Canvas canvas) {
         int id = 1;
-        for (GridObstacle gridObstacle : grid.getObstacleList()){
+        for (GridObstacle gridObstacle : grid.getObstacleList()) {
             int left = offsetX + gridObstacle.getPosition().getXInt() * cellSize;
-            int top = offsetY + (Grid.GRID_SIZE - 1 - gridObstacle.getPosition().getYInt()) * cellSize;  // Flip y-axis
+            int top = offsetY + (Grid.GRID_SIZE - 1 - gridObstacle.getPosition().getYInt()) * cellSize; // Flip y-axis
             int right = left + cellSize;
             int bottom = top + cellSize;
 
-            boolean selected = gridObstacle.isSelected();
-            canvas.drawRect(left, top, right, bottom, selected ? obstacleSelectedPaint : obstaclePaint);
+            // 3D Effect: Draw Shadow first (offset)
+            int shadowOffset = cellSize / 10;
+            canvas.drawRect(left + shadowOffset, top + shadowOffset, right + shadowOffset, bottom + shadowOffset,
+                    obstacleShadowPaint);
+
+            // Draw Block Body
+            canvas.drawRect(left, top, right, bottom, obstaclePaint);
+
+            // Draw Selection Border if selected
+            if (gridObstacle.isSelected()) {
+                canvas.drawRect(left, top, right, bottom, obstacleSelectedPaint);
+            }
 
             // Compute text position (center of cell)
             float textX = left + (cellSize / 2);
             float textY = top + (cellSize / 2) - ((idPaint.descent() + idPaint.ascent()) / 2);
 
-            if(gridObstacle.getTarget() == null){
+            if (gridObstacle.getTarget() == null) {
                 // Draw ID text (no target yet)
                 canvas.drawText(String.valueOf(gridObstacle.getId()), textX, textY, idPaint);
-            }
-            else {
+            } else {
                 // Draw target text if avail
                 canvas.drawText(gridObstacle.getTarget().getTargetStr(), textX, textY, targetPaint);
             }

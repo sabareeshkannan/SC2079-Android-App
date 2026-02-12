@@ -1,68 +1,76 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Sci-Fi Laboratory Palette (Light Mode) -->
+    <!-- Republic / Light Side Theme (Clean Tech) -->
     <color name="black">#000000</color>
     <color name="white">#FFFFFF</color>
 
     <!-- Backgrounds -->
-    <color name="bg_dark">#F3F4F6</color> <!-- Soft Porcelain -->
-    <color name="bg_darker">#E5E7EB</color>
-    <color name="bg_card">#FFFFFF</color> <!-- Pure White -->
-    <color name="bg_card_light">#F9FAFB</color>
-    <color name="divider">#E5E7EB</color>
+    <color name="bg_dark">#F5F5F7</color> <!-- Off White -->
+    <color name="bg_darker">#E0E0E0</color>
+    <color name="bg_card">#FFFFFF</color>
+    <color name="bg_card_light">#FAFAFA</color>
+    <color name="divider">#E0E0E0</color>
+
+    <!-- Holo Palette (Muted for Light Mode) -->
+    <color name="neon_blue">#007AFF</color>   <!-- Republic Blue -->
+    <color name="neon_blue_glow">#10007AFF</color>
+    <color name="neon_green">#34C759</color>
+    <color name="neon_green_glow">#1034C759</color>
+    <color name="neon_red">#FF3B30</color>
+    <color name="neon_red_glow">#10FF3B30</color>
+    
+    <color name="panel_grey">#F0F0F0</color>
 
     <!-- Branding Colors -->
-    <!-- Primary: Deep Science Blue -->
-    <color name="primary">#2563EB</color>
-    <color name="primary_dark">#1D4ED8</color>
-    <color name="primary_light">#60A5FA</color>
-    <color name="primary_glow">#3B82F6</color>
+    <color name="primary">#007AFF</color>
+    <color name="primary_dark">#0051A8</color>
+    <color name="primary_light">#5AC8FA</color>
+    <color name="primary_glow">#007AFF</color>
     
-    <!-- Secondary: Tech Teal -->
-    <color name="secondary">#059669</color>
-    <color name="secondary_dark">#047857</color>
-    <color name="secondary_light">#34D399</color>
-    <color name="secondary_glow">#10B981</color>
+    <color name="secondary">#FF9500</color> <!-- Rebel Orange -->
+    <color name="secondary_dark">#B36A00</color>
+    <color name="secondary_light">#FFCC00</color>
+    <color name="secondary_glow">#FF9500</color>
     
-    <!-- Accent: Energetic Orange -->
-    <color name="accent">#EA580C</color>
-    <color name="accent_dark">#C2410C</color>
-    <color name="accent_light">#FB923C</color>
+    <color name="accent">#5856D6</color>
+    <color name="accent_dark">#3634A3</color>
+    <color name="accent_light">#8D8BE6</color>
     
-    <!-- Tertiary: Crimson -->
-    <color name="tertiary">#DC2626</color>
-    <color name="tertiary_light">#EF4444</color>
+    <color name="tertiary">#FF2D55</color>
+    <color name="tertiary_light">#FF5E7D</color>
     
-    <!-- Glassmorphism -->
-    <color name="glass_bg">#99FFFFFF</color>
+    <color name="glass_bg">#CCFFFFFF</color>
     <color name="glass_border">#1A000000</color>
     
     <!-- Text colors -->
-    <color name="text_primary">#111827</color> <!-- Gunmetal -->
-    <color name="text_secondary">#4B5563</color> <!-- Cool Gray -->
-    <color name="text_hint">#9CA3AF</color>
-    <color name="text_glow">#6B7280</color>
+    <color name="text_primary">#1C1C1E</color>
+    <color name="text_secondary">#636366</color>
+    <color name="text_hint">#AEAEB2</color>
+    <color name="text_glow">#007AFF</color>
     
-    <!-- Status colors -->
-    <color name="status_success">#059669</color>
-    <color name="status_warning">#B45309</color>
-    <color name="status_error">#DC2626</color>
+    <color name="status_success">#34C759</color>
+    <color name="status_warning">#FF9500</color>
+    <color name="status_error">#FF3B30</color>
     
-    <!-- Gradient colors (Subtle) -->
-    <color name="gradient_start">#EFF6FF</color>
-    <color name="gradient_mid">#DBEAFE</color>
-    <color name="gradient_end">#BFDBFE</color>
+    <color name="gradient_start">#FFFFFF</color>
+    <color name="gradient_mid">#F2F2F7</color>
+    <color name="gradient_end">#E5E5EA</color>
 
-    <color name="button_pressed_grey">#E5E7EB</color>
+    <color name="button_pressed_grey">#D1D1D6</color>
 
     <!-- Canvas Specific Colors -->
-    <!-- Softened lines for professional look -->
-    <color name="grid_line_red">#F87171</color>
-    <color name="grid_line_blue">#60A5FA</color>
+    <color name="grid_line_red">#FF3B30</color>
+    <color name="grid_line_blue">#007AFF</color>
     
-    <color name="obstacle_body">#1F2937</color> <!-- Gunmetal for strong contrast -->
-    <color name="obstacle_selected">#E5E7EB</color> 
+    <color name="obstacle_body">#F2F2F7</color> <!-- Very Light Grey -->
+    <color name="obstacle_selected">#007AFF</color> 
+    <color name="obstacle_facing">#3A3A3C</color> <!-- Dark Grey -->
+    <color name="obstacle_shadow">#20000000</color>
+
+    <color name="robot_body">#8E8E93</color> <!-- Standard Grey -->
+    <color name="robot_direction">#FF3B30</color> <!-- Red -->
+    <color name="robot_shadow">#40000000</color>
     
-    <color name="input_border">#D1D5DB</color>
+    <color name="input_border">#C6C6C8</color>
     <color name="input_bg">#FFFFFF</color>
 </resources>
