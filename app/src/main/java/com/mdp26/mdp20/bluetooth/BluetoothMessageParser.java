@@ -41,21 +41,19 @@ public interface BluetoothMessageParser extends Function<String, BluetoothMessag
                 case "STATUS" -> ret = BluetoothMessage.ofRobotStatusMessage(msg, params[1]);
                 case "ROBOT", "LOCATION" -> {
                     // ROBOT,<x>,<y>,<direction>
-                    if(params.length >= 4) {
+                    // Allow params.length >= 3 (default dir to 1)
+                    if(params.length >= 3) {
                         try {
                             int x = Integer.parseInt(params[1].trim());
                             int y = Integer.parseInt(params[2].trim());
-                            // direction is a string (N/S/E/W) or int? 
-                            // The RobotPositionMessage expects an int direction code usually, OR we parse N/S/E/W to int
-                            // Let's assume we need to convert String Direction to int if necessary
-                            // But BluetoothMessage.ofRobotPositionMessage takes int direction.
-                            // However, the previous implementation used tryGetIntParams for 3 params.
-                            // Let's infer direction from string if it's not a number.
-                            int dir = 0;
-                            try {
-                                dir = Integer.parseInt(params[3].trim());
-                            } catch (NumberFormatException e) {
-                                dir = parseDirection(params[3].trim());
+                            int dir = 1; // Default North
+                            
+                            if (params.length >= 4) {
+                                try {
+                                    dir = Integer.parseInt(params[3].trim());
+                                } catch (NumberFormatException e) {
+                                    dir = parseDirection(params[3].trim());
+                                }
                             }
                             ret = BluetoothMessage.ofRobotPositionMessage(msg, x, y, dir);
                         } catch (Exception e) {

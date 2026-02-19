@@ -95,6 +95,11 @@ public class CanvasActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        try {
+            getApplicationContext().unregisterReceiver(msgReceiver);
+        } catch (IllegalArgumentException e) {
+            // Receiver not registered
+        }
         if (mediaPlayer != null) {
             mediaPlayer.release();
             mediaPlayer = null;
@@ -359,6 +364,10 @@ public class CanvasActivity extends AppCompatActivity {
                 // mediaPlayer.start();
             }
         } else if (btMsg instanceof BluetoothMessage.TargetFoundMessage m) {
+            // Update Status HUD with Target Info
+            String targetStatus = String.format("TARGET %d AT OBS %d", m.targetId(), m.obstacleId());
+            robotStatusDynamic.setText(targetStatus);
+            
             // update obstacle's target
             myApp.grid().updateObstacleTarget(m.obstacleId(), m.targetId());
             // update facing if provided
@@ -367,12 +376,22 @@ public class CanvasActivity extends AppCompatActivity {
                     .ifPresent(obs -> obs.setFacing(Facing.getFacingFromCode(m.direction())));
             }
             canvasView.invalidate();
-            receivedMessages.append("\n[image-rec] " + m.rawMsg() + "\n"); // just print on ui for now
+            receivedMessages.append("\n[image-rec] " + m.rawMsg() + "\n");
         } else if (btMsg instanceof BluetoothMessage.RobotPositionMessage m) {
+            // Update Status to MOVING TO (X, Y, DIR)
+            String dirStr = switch (m.direction()) {
+                case 1 -> "N";
+                case 2 -> "E";
+                case 3 -> "S";
+                case 4 -> "W";
+                default -> "?";
+            };
+            robotStatusDynamic.setText(String.format("MOVING TO (%d, %d, %s)", m.x(), m.y(), dirStr));
+            
             // update robot's pos, then invalidate ui
             myApp.robot().updatePosition(m.x(), m.y()).updateFacing(Facing.getFacingFromCode(m.direction()));
             robotView.invalidate();
-            receivedMessages.append("\n[location] " + m.rawMsg() + "\n"); // just print on ui for now
+            receivedMessages.append("\n[location] " + m.rawMsg() + "\n");
         }
         scrollReceivedMessages.post(() -> scrollReceivedMessages.fullScroll(View.FOCUS_DOWN));
     }

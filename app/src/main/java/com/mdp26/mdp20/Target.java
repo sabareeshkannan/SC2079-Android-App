@@ -6,7 +6,8 @@ package com.mdp26.mdp20;
 public class Target {
     // use an array of size 41
     private static String[] map = new String[]{
-            "", "", "", "", "", "", "", "", "", "", //0-9th idx
+            "0",
+            "1", "2", "3", "4", "5", "6", "7", "8", "9", // 1-9
             "bs", // "Bullseye", //10
             "1", // "One",
             "2", // "Two",
