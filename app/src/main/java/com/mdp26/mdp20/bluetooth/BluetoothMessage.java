@@ -11,13 +11,14 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Represents a bluetooth message sent FROM the robot.
  * <p> Essentially wraps around a raw message string and provides the parsed info as getters.
  * <p> Use {@code ofXXX()} to create the subclassed record.
  */
-public sealed interface BluetoothMessage permits BluetoothMessage.CustomMessage, BluetoothMessage.ObstaclesMessage, BluetoothMessage.PlainStringMessage, BluetoothMessage.RobotMoveMessage, BluetoothMessage.RobotPositionMessage, BluetoothMessage.RobotStartMessage, BluetoothMessage.RobotStatusMessage, BluetoothMessage.TargetFoundMessage {
+public sealed interface BluetoothMessage permits BluetoothMessage.CustomMessage, BluetoothMessage.ObstaclesMessage, BluetoothMessage.PlainStringMessage, BluetoothMessage.RobotMoveMessage, BluetoothMessage.RobotPositionMessage, BluetoothMessage.RobotStartMessage, BluetoothMessage.RobotStatusMessage, BluetoothMessage.TargetFoundMessage, BluetoothMessage.RobotStateMessage, BluetoothMessage.ObstacleEventMessage {
     // this class uses the sealed..permit feature as a usage example, not strictly necessary
 
     public static final String TAG = "BluetoothMessage";
@@ -94,36 +95,76 @@ public sealed interface BluetoothMessage permits BluetoothMessage.CustomMessage,
     }
 
     /**
-     * Sent to RPI. Sends robot the obstacle list and initial robot pos
+     * Sent to RPI. Robot State.
+     * Format: ROBOT,<x>,<y>,<DIRECTION>
+     * x: X-coordinate in cm (0-based from left, (col-2)*5).
+     * y: Y-coordinate in cm (0-based from bottom, (row-1)*5).
      */
-    public record ObstaclesMessage(Position robotInitPos, Facing robotInitDir, List<GridObstacle> obstacleList) implements BluetoothMessage, JsonMessage {
+    public record RobotStateMessage(int x, int y, Facing direction) implements BluetoothMessage, JsonMessage {
         @Override
         public String getAsJson() {
-            JSONObject jsonObject = new JSONObject();
-            try {
-                jsonObject.put("robot_x", robotInitPos.getXInt());
-                jsonObject.put("robot_y", robotInitPos.getYInt());
-                jsonObject.put("robot_dir", robotInitDir.getMappedCode());
-                jsonObject.put("mode", "0");
-                JSONArray arr = new JSONArray();
-                for (GridObstacle obst : obstacleList) {
-                    JSONObject obstJson = new JSONObject();
-                    obstJson.put("x", obst.getPosition().getXInt());
-                    obstJson.put("y", obst.getPosition().getYInt());
-                    obstJson.put("id", obst.getId());
-                    obstJson.put("d", obst.getFacing().getMappedCode());
-                    arr.put(obstJson);
-                }
-                jsonObject.put("obstacles", arr);
-            } catch (JSONException e) {
-                Log.e(TAG,"Error creating json for ObstaclesMessage");
-                throw new RuntimeException(e);
-            }
-            return getFormattedObj("obstacles", jsonObject);
+            int valX = (x - 2) * 5;
+            int valY = (y - 1) * 5;
+            return String.format(Locale.ENGLISH, "ROBOT,%d,%d,%s", valX, valY, direction.name());
         }
     }
-    public static BluetoothMessage ofObstaclesMessage(Position robotInitPos, Facing robotInitDir, List<GridObstacle> obstacleList) {
-        return new ObstaclesMessage(robotInitPos, robotInitDir, obstacleList);
+    public static BluetoothMessage ofRobotStateMessage(int x, int y, Facing direction) {
+        return new RobotStateMessage(x, y, direction);
+    }
+
+    /**
+     * Sent to RPI. Obstacle Management.
+     * Format: OBSTACLE,<id>,<x>,<y>,<FACE>
+     * x: X-coordinate in cm (grid index * 10).
+     * y: Y-coordinate in cm (grid index * 10). Note: Top-Left origin or inverted Y-axis logic in some contexts ((19-row)*10).
+     * Removal: FACE is -1.
+     */
+    public record ObstacleEventMessage(int id, int x, int y, Facing face, boolean isRemove) implements BluetoothMessage, JsonMessage {
+        @Override
+        public String getAsJson() {
+            int cmX = x * 10;
+            // Y: (19 - y) * 10 (Top-Left Origin)
+            int cmY = (19 - y) * 10;
+            
+            if (isRemove) {
+                return String.format(Locale.ENGLISH, "OBSTACLE,%d,%d,%d,-1", id, cmX, cmY);
+            } else {
+                return String.format(Locale.ENGLISH, "OBSTACLE,%d,%d,%d,%s", id, cmX, cmY, face.name());
+            }
+        }
+    }
+    public static BluetoothMessage ofObstacleEventMessage(int id, int x, int y, Facing face, boolean isRemove) {
+        return new ObstacleEventMessage(id, x, y, face, isRemove);
+    }
+
+    /**
+     * Sent to RPI. Task Initiation.
+     * Format: ALG|<x>,<y>,<dir>,<id>|...
+     */
+    public record ObstaclesMessage(List<GridObstacle> obstacleList) implements BluetoothMessage, JsonMessage {
+        @Override
+        public String getAsJson() {
+            StringBuilder sb = new StringBuilder("ALG");
+            for (GridObstacle obs : obstacleList) {
+                sb.append("|");
+                int centerX = (obs.getPosition().getXInt() * 10) + 5;
+                int centerY = (obs.getPosition().getYInt() * 10) + 5;
+                
+                int degrees = 90;
+                switch (obs.getFacing()) {
+                    case NORTH: degrees = 90; break;
+                    case EAST: degrees = 0; break;
+                    case SOUTH: degrees = -90; break;
+                    case WEST: degrees = 180; break;
+                }
+                
+                sb.append(centerX).append(",").append(centerY).append(",").append(degrees).append(",").append(obs.getId());
+            }
+            return sb.toString();
+        }
+    }
+    public static BluetoothMessage ofObstaclesMessage(List<GridObstacle> obstacleList) {
+        return new ObstaclesMessage(obstacleList);
     }
 
     /**

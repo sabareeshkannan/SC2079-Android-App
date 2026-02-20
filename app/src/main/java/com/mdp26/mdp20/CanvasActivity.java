@@ -209,8 +209,10 @@ public class CanvasActivity extends AppCompatActivity {
     }
 
     private void startRobot() {
-        BluetoothMessage msg = BluetoothMessage.ofRobotStartMessage();
-        myApp.btConnection().sendMessage(msg.getAsJsonMessage().getAsJson());
+        // Send ALG message for Task Initiation
+        BluetoothMessage msg = BluetoothMessage.ofObstaclesMessage(myApp.grid().getObstacleList());
+        if (myApp.btConnection() != null)
+            myApp.btConnection().sendMessage(msg.getAsJsonMessage().getAsJson());
         if (mediaPlayer != null) {
             mediaPlayer.stop();
             mediaPlayer.release();
@@ -237,9 +239,7 @@ public class CanvasActivity extends AppCompatActivity {
             Toast.makeText(CanvasActivity.this, "Error: No Bluetooth Connection", Toast.LENGTH_SHORT).show();
             return;
         }
-        BluetoothMessage msg = BluetoothMessage.ofObstaclesMessage(myApp.robot().getPosition(),
-                this.myApp.robot().getFacing(),
-                this.myApp.grid().getObstacleList());
+        BluetoothMessage msg = BluetoothMessage.ofObstaclesMessage(this.myApp.grid().getObstacleList());
         myApp.btConnection().sendMessage(msg.getAsJsonMessage().getAsJson());
         Toast.makeText(CanvasActivity.this, "Data sent successfully", Toast.LENGTH_SHORT).show();
         if (mediaPlayer != null) {
@@ -315,6 +315,12 @@ public class CanvasActivity extends AppCompatActivity {
     private void initializeRobot(int x, int y, Facing facing) {
         myApp.robot().updatePosition(x, y);
         myApp.robot().updateFacing(facing);
+
+        if (myApp.btConnection() != null) {
+            BluetoothMessage msg = BluetoothMessage.ofRobotStateMessage(x, y, facing);
+            myApp.btConnection().sendMessage(msg.getAsJsonMessage().getAsJson());
+        }
+
         robotView.invalidate();
         if (mediaPlayer != null) {
             mediaPlayer.stop();

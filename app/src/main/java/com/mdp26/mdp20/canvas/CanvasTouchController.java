@@ -8,6 +8,8 @@ import android.widget.Toast;
 
 
 import com.mdp26.mdp20.MyApplication;
+import com.mdp26.mdp20.bluetooth.BluetoothMessage;
+import com.mdp26.mdp20.Facing;
 
 import java.util.Optional;
 
@@ -77,8 +79,8 @@ public class CanvasTouchController implements View.OnTouchListener {
                         obstacle.rotateClockwise();
                         // Send update
                         if (myApp.btConnection() != null) {
-                            String faceUrl = convertFacingToInt(obstacle.getFacing());
-                            myApp.btConnection().sendMessage("OBSTACLE," + obstacle.getId() + "," + obstacle.getPosition().getXInt() + "," + obstacle.getPosition().getYInt() + "," + faceUrl);
+                            BluetoothMessage msg = BluetoothMessage.ofObstacleEventMessage(obstacle.getId(), obstacle.getPosition().getXInt(), obstacle.getPosition().getYInt(), obstacle.getFacing(), false);
+                            myApp.btConnection().sendMessage(msg.getAsJsonMessage().getAsJson());
                         }
                         Log.d(TAG, "Rotated obstacle clockwise at " + obstacle.getPosition());
                         canvasView.invalidate(); // Refresh canvas
@@ -86,8 +88,10 @@ public class CanvasTouchController implements View.OnTouchListener {
                         // Remove if lifted outside the grid
                         grid.removeObstacle(oldX, oldY);
                         // Send remove command (Using -1 or REMOVE keyword)
-                         if (myApp.btConnection() != null)
-                            myApp.btConnection().sendMessage("OBSTACLE," + obstacle.getId() + ",REMOVE");
+                         if (myApp.btConnection() != null) {
+                            BluetoothMessage msg = BluetoothMessage.ofObstacleEventMessage(obstacle.getId(), oldX, oldY, obstacle.getFacing(), true);
+                            myApp.btConnection().sendMessage(msg.getAsJsonMessage().getAsJson());
+                         }
                         Log.d(TAG, "Removed obstacle at (" + oldX + ", " + oldY + ")");
                         canvasView.invalidate(); // Refresh canvas
                     } else if (!grid.hasObstacle(upX, upY)) { // if finger lifted on empty cell
@@ -95,8 +99,8 @@ public class CanvasTouchController implements View.OnTouchListener {
                         obstacle.updatePosition(upX, upY);
                         // Send move update
                         if (myApp.btConnection() != null) {
-                             String faceUrl = convertFacingToInt(obstacle.getFacing());
-                             myApp.btConnection().sendMessage("OBSTACLE,"  + obstacle.getId() + "," + upX + "," + upY + "," + faceUrl);
+                             BluetoothMessage msg = BluetoothMessage.ofObstacleEventMessage(obstacle.getId(), upX, upY, obstacle.getFacing(), false);
+                             myApp.btConnection().sendMessage(msg.getAsJsonMessage().getAsJson());
                         }
                         Log.d(TAG, "Moved obstacle from (" + oldX + ", " + oldY + ") to (" + upX + ", " + upY + ")");
                         Toast.makeText(myApp, "Moved obst to (" + upX + ", " + upY + ")", Toast.LENGTH_SHORT).show();
@@ -109,8 +113,9 @@ public class CanvasTouchController implements View.OnTouchListener {
                         grid.addObstacle(obstacle);
                         // Send add update
                         if (myApp.btConnection() != null) {
-                             // Default facing is NORTH (0)
-                             myApp.btConnection().sendMessage("OBSTACLE," + obstacle.getId() + "," + upX + "," + upY + ",0");
+                             // Default facing is NORTH
+                             BluetoothMessage msg = BluetoothMessage.ofObstacleEventMessage(obstacle.getId(), upX, upY, Facing.NORTH, false);
+                             myApp.btConnection().sendMessage(msg.getAsJsonMessage().getAsJson());
                         }
                         Log.d(TAG, "Added new obstacle at (" + upX + ", " + upY + ")");
                         Toast.makeText(myApp, "Added obst at (" + upX + ", " + upY + ")", Toast.LENGTH_SHORT).show();
