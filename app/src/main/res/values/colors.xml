@@ -1,62 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- Republic / Light Side Theme (Clean Tech) -->
-    <color name="black">#000000</color>
     <color name="white">#FFFFFF</color>
 
     <!-- Backgrounds -->
     <color name="bg_dark">#F5F5F7</color> <!-- Off White -->
-    <color name="bg_darker">#E0E0E0</color>
     <color name="bg_card">#FFFFFF</color>
     <color name="bg_card_light">#FAFAFA</color>
     <color name="divider">#E0E0E0</color>
 
     <!-- Holo Palette (Muted for Light Mode) -->
     <color name="neon_blue">#007AFF</color>   <!-- Republic Blue -->
-    <color name="neon_blue_glow">#10007AFF</color>
     <color name="neon_green">#34C759</color>
-    <color name="neon_green_glow">#1034C759</color>
     <color name="neon_red">#FF3B30</color>
-    <color name="neon_red_glow">#10FF3B30</color>
-    
-    <color name="panel_grey">#F0F0F0</color>
 
     <!-- Branding Colors -->
     <color name="primary">#007AFF</color>
-    <color name="primary_dark">#0051A8</color>
     <color name="primary_light">#5AC8FA</color>
-    <color name="primary_glow">#007AFF</color>
     
     <color name="secondary">#FF9500</color> <!-- Rebel Orange -->
-    <color name="secondary_dark">#B36A00</color>
-    <color name="secondary_light">#FFCC00</color>
-    <color name="secondary_glow">#FF9500</color>
     
     <color name="accent">#5856D6</color>
-    <color name="accent_dark">#3634A3</color>
-    <color name="accent_light">#8D8BE6</color>
     
     <color name="tertiary">#FF2D55</color>
-    <color name="tertiary_light">#FF5E7D</color>
-    
-    <color name="glass_bg">#CCFFFFFF</color>
-    <color name="glass_border">#1A000000</color>
-    
+
     <!-- Text colors -->
     <color name="text_primary">#1C1C1E</color>
     <color name="text_secondary">#636366</color>
     <color name="text_hint">#AEAEB2</color>
-    <color name="text_glow">#007AFF</color>
     
     <color name="status_success">#34C759</color>
-    <color name="status_warning">#FF9500</color>
-    <color name="status_error">#FF3B30</color>
-    
-    <color name="gradient_start">#FFFFFF</color>
-    <color name="gradient_mid">#F2F2F7</color>
-    <color name="gradient_end">#E5E5EA</color>
 
-    <color name="button_pressed_grey">#D1D1D6</color>
 
     <!-- Canvas Specific Colors -->
     <color name="grid_line_red">#FF3B30</color>
@@ -71,6 +45,5 @@
     <color name="robot_direction">#FF3B30</color> <!-- Red -->
     <color name="robot_shadow">#40000000</color>
     
-    <color name="input_border">#C6C6C8</color>
     <color name="input_bg">#FFFFFF</color>
 </resources>
