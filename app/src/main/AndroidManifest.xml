@@ -36,9 +36,6 @@
             android:exported="false" />
         <activity
             android:name="com.mdp26.mdp20.BluetoothActivity"
-            android:exported="false" />
-        <activity
-            android:name="com.mdp26.mdp20.InitActivity"
             android:exported="true"
             android:theme="@style/Theme.RobotController">
             <intent-filter>

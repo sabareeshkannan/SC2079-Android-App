@@ -28,35 +28,31 @@
 
         <!-- Header Compact -->
         <!-- Header Compact -->
-        <LinearLayout
+        <TextView
+            android:id="@+id/textHeaderSubtitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:gravity="start"
+            android:text="@string/a_project_by"
+            android:textColor="@color/text_secondary"
+            android:textSize="9sp"
+            android:letterSpacing="0.2"
+            android:paddingBottom="1dp"
+            android:fontFamily="sans-serif-medium"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+            app:layout_constraintTop_toTopOf="parent" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="A  P R O J E C T  B Y"
-                android:textColor="@color/text_secondary"
-                android:textSize="9sp"
-                android:letterSpacing="0.2"
-                android:paddingBottom="1dp"
-                android:fontFamily="sans-serif-medium"/>
-
-            <TextView
-                android:id="@+id/textGroupBadge"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="mdp group 20"
-                android:textColor="@color/text_primary"
-                android:fontFamily="@font/starjedi"
-                app:fontFamily="@font/starjedi"
-                android:textSize="18sp"
-                android:letterSpacing="0.0"/>
-        </LinearLayout>
+        <TextView
+            android:id="@+id/textGroupBadge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/mdp_group_20"
+            android:textColor="@color/text_primary"
+            android:fontFamily="@font/starjedi"
+            app:fontFamily="@font/starjedi"
+            android:textSize="18sp"
+            android:letterSpacing="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/textHeaderSubtitle" />
 
         <ImageButton
             android:id="@+id/btnThemeToggle"
@@ -106,7 +102,7 @@
                 android:id="@+id/textReceivedMsg"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="> Stable."
+                android:text="@string/stable"
                 android:fontFamily="monospace"
                 android:textSize="10sp"
                 android:maxLines="1"
@@ -166,7 +162,7 @@
                 android:layout_width="0dp"
                 android:layout_height="60dp"
                 android:layout_weight="1"
-                android:text="SCAN DEVICES"
+                android:text="@string/scan_devices"
                 android:textSize="11sp"
                 android:textColor="@color/neon_blue"
                 android:background="@drawable/selector_btn_holo_blue"
@@ -189,7 +185,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="DISCOVERABLE"
+                    android:text="@string/discoverable"
                     android:textColor="@color/neon_green"
                     android:textSize="9sp"
                     android:textStyle="bold"
@@ -208,7 +204,7 @@
             android:id="@+id/btnBigRed"
             android:layout_width="match_parent"
             android:layout_height="50dp"
-            android:text="INITIALISE LAUNCH"
+            android:text="@string/initialise_launch"
             android:background="@drawable/selector_btn_holo_red"
             android:textColor="@color/neon_red"
             android:textSize="14sp"
@@ -236,7 +232,7 @@
         android:id="@+id/labelResults"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="DETECTED SIGNALS"
+        android:text="@string/detected_signals"
         android:textColor="@color/text_secondary"
         android:textSize="12sp"
         android:letterSpacing="0.1"

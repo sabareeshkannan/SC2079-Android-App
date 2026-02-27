@@ -25,12 +25,12 @@
         <com.google.android.material.tabs.TabItem
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="MAP" />
+            android:text="@string/map" />
 
         <com.google.android.material.tabs.TabItem
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="LOGS" />
+            android:text="@string/logs" />
     </com.google.android.material.tabs.TabLayout>
 
     <View
@@ -131,7 +131,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="STATUS:"
+                            android:text="@string/status"
                             android:textSize="12sp"
                             android:fontFamily="sans-serif-medium"
                             android:textColor="@color/text_secondary"
@@ -141,7 +141,7 @@
                             android:id="@+id/robotStatusDynamic"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="WAITING"
+                            android:text="@string/waiting"
                             android:textSize="14sp"
                             android:fontFamily="sans-serif-black"
                             android:textColor="@color/primary"/>
@@ -192,6 +192,52 @@
                                 android:layout_height="match_parent"
                                 android:background="@null" />
                         </FrameLayout>
+                    </LinearLayout>
+
+                    <!-- Save/Load Actions -->
+                    <LinearLayout
+                        android:id="@+id/saveLoadButtons"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="12dp"
+                        android:orientation="horizontal">
+
+                        <androidx.appcompat.widget.AppCompatButton
+                            android:id="@+id/btnSaveMap"
+                            android:layout_width="0dp"
+                            android:layout_height="40dp"
+                            android:layout_marginEnd="4dp"
+                            android:layout_weight="1"
+                            android:background="@drawable/selector_btn_holo_blue"
+                            android:text="@string/save_map"
+                            android:textColor="@color/neon_blue"
+                            android:textSize="11sp"
+                            android:textStyle="bold" />
+
+                        <androidx.appcompat.widget.AppCompatButton
+                            android:id="@+id/btnLoadMap"
+                            android:layout_width="0dp"
+                            android:layout_height="40dp"
+                            android:layout_marginEnd="4dp"
+                            android:layout_marginStart="4dp"
+                            android:layout_weight="1"
+                            android:background="@drawable/selector_btn_holo_green"
+                            android:text="@string/load_map"
+                            android:textColor="@color/neon_green"
+                            android:textSize="11sp"
+                            android:textStyle="bold" />
+
+                        <androidx.appcompat.widget.AppCompatButton
+                            android:id="@+id/btnClearMap"
+                            android:layout_width="0dp"
+                            android:layout_height="40dp"
+                            android:layout_marginStart="4dp"
+                            android:layout_weight="1"
+                            android:background="@drawable/selector_btn_holo_red"
+                            android:text="@string/clear_map"
+                            android:textColor="@color/neon_red"
+                            android:textSize="11sp"
+                            android:textStyle="bold" />
                     </LinearLayout>
 
                     <!-- Primary Actions Row -->
@@ -357,7 +403,7 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="COMMUNICATION HISTORY"
+                    android:text="@string/communication_history"
                     android:textSize="12sp"
                     android:textStyle="bold"
                     android:textColor="@color/text_secondary"
@@ -382,7 +428,7 @@
                         android:id="@+id/ReceiveMsgTextView"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="> System ready."
+                        android:text="@string/system_ready"
                         android:fontFamily="monospace"
                         android:textSize="14sp"
                         android:textColor="@color/text_secondary"/>
