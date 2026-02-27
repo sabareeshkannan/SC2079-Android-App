@@ -291,6 +291,12 @@ public class CanvasActivity extends AppCompatActivity {
     }
 
     private void loadMap() {
+        String currentStatus = robotStatusDynamic.getText().toString().toUpperCase();
+        if (currentStatus.contains("RUNNING") || currentStatus.contains("MOVING")) {
+            Toast.makeText(this, "Cannot load map while Robot is moving!", Toast.LENGTH_LONG).show();
+            return;
+        }
+
         SharedPreferences prefs = getSharedPreferences("ObstaclePrefs", MODE_PRIVATE);
         String savedData = prefs.getString("saved_obstacles", "[]");
         try {
