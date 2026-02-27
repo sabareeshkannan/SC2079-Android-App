@@ -209,10 +209,9 @@ public class CanvasActivity extends AppCompatActivity {
     }
 
     private void startRobot() {
-        // Send ALG message for Task Initiation
-        BluetoothMessage msg = BluetoothMessage.ofObstaclesMessage(myApp.grid().getObstacleList());
-        if (myApp.btConnection() != null)
-            myApp.btConnection().sendMessage(msg.getAsJsonMessage().getAsJson());
+        if (myApp.btConnection() != null) {
+            myApp.btConnection().sendMessage("BEGIN");
+        }
         if (mediaPlayer != null) {
             mediaPlayer.stop();
             mediaPlayer.release();
