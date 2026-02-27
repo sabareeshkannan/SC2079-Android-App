@@ -147,6 +147,10 @@ public class CanvasActivity extends AppCompatActivity {
             if (currentStatus.contains("RUNNING") || currentStatus.contains("MOVING")) {
                 Toast.makeText(this, "Cannot clear map while Robot is moving!", Toast.LENGTH_LONG).show();
             } else {
+                if (myApp.btConnection() != null) {
+                    BluetoothMessage msgClear = BluetoothMessage.ofPlainStringMessage("CLEAR");
+                    myApp.btConnection().sendMessage(msgClear.getAsJsonMessage().getAsJson());
+                }
                 myApp.grid().clear();
                 canvasView.invalidate();
                 Toast.makeText(this, "Map Cleared", Toast.LENGTH_SHORT).show();
@@ -301,7 +305,14 @@ public class CanvasActivity extends AppCompatActivity {
         String savedData = prefs.getString("saved_obstacles", "[]");
         try {
             JSONArray array = new JSONArray(savedData);
+            
+            // First, tell the RPi to wipe its memory bank
+            if (myApp.btConnection() != null) {
+                BluetoothMessage msgClear = BluetoothMessage.ofPlainStringMessage("CLEAR");
+                myApp.btConnection().sendMessage(msgClear.getAsJsonMessage().getAsJson());
+            }
             myApp.grid().clear();
+            
             for (int i = 0; i < array.length(); i++) {
                 JSONObject obj = array.getJSONObject(i);
                 int x = obj.getInt("x");
@@ -310,6 +321,12 @@ public class CanvasActivity extends AppCompatActivity {
                 
                 GridObstacle obs = GridObstacle.of(x, y, facing);
                 myApp.grid().addObstacle(obs);
+                
+                // Blast the newly loaded obstacle out to the RPi memory bank
+                if (myApp.btConnection() != null) {
+                    BluetoothMessage msg = BluetoothMessage.ofObstacleEventMessage(obs.getId(), x, y, facing, false);
+                    myApp.btConnection().sendMessage(msg.getAsJsonMessage().getAsJson());
+                }
             }
             canvasView.invalidate();
             Toast.makeText(this, "Map Loaded! (" + array.length() + " obstacles)", Toast.LENGTH_SHORT).show();
