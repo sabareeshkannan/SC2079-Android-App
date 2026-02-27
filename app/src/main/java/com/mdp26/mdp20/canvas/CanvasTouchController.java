@@ -75,6 +75,12 @@ public class CanvasTouchController implements View.OnTouchListener {
                     int oldY = obstacle.getPosition().getYInt();
                     Log.d(TAG, downX + " " + downY + " " + upX + " " + upY);
                     if (downX == upX && downY == upY) { // if the finger is lifted on the same cell
+                        // Send REMOVE first!
+                        if (myApp.btConnection() != null) {
+                            BluetoothMessage msgRemove = BluetoothMessage.ofObstacleEventMessage(obstacle.getId(), oldX, oldY, obstacle.getFacing(), true);
+                            myApp.btConnection().sendMessage(msgRemove.getAsJsonMessage().getAsJson());
+                        }
+
                         // Rotate obstacle clockwise if lifted on the same cell
                         obstacle.rotateClockwise();
                         // Send update
@@ -95,6 +101,12 @@ public class CanvasTouchController implements View.OnTouchListener {
                         Log.d(TAG, "Removed obstacle at (" + oldX + ", " + oldY + ")");
                         canvasView.invalidate(); // Refresh canvas
                     } else if (!grid.hasObstacle(upX, upY)) { // if finger lifted on empty cell
+                        // Send REMOVE first from the old position
+                        if (myApp.btConnection() != null) {
+                            BluetoothMessage msgRemove = BluetoothMessage.ofObstacleEventMessage(obstacle.getId(), oldX, oldY, obstacle.getFacing(), true);
+                            myApp.btConnection().sendMessage(msgRemove.getAsJsonMessage().getAsJson());
+                        }
+
                         // Move obstacle only if lifted on an empty cell
                         obstacle.updatePosition(upX, upY);
                         // Send move update
