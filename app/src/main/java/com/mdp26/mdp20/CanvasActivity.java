@@ -10,6 +10,7 @@ import android.content.BroadcastReceiver;
 import android.content.IntentFilter;
 import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.ScrollView;
 import android.widget.TextView;
@@ -21,6 +22,10 @@ import android.widget.Toast;
 import android.text.InputFilter;
 import android.text.Spanned;
 import android.widget.EditText;
+import android.content.SharedPreferences;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import com.mdp26.mdp20.bluetooth.BluetoothMessage;
 import com.mdp26.mdp20.bluetooth.BluetoothMessageParser;
@@ -131,6 +136,23 @@ public class CanvasActivity extends AppCompatActivity {
         btnSendData.setOnClickListener(view -> sendData());
         btnInitializeRobot = findViewById(R.id.btnInitializeRobot);
         btnInitializeRobot.setOnClickListener(view -> initializeRobotFromInput());
+        
+        Button btnSaveMap = findViewById(R.id.btnSaveMap);
+        btnSaveMap.setOnClickListener(view -> saveMap());
+        Button btnLoadMap = findViewById(R.id.btnLoadMap);
+        btnLoadMap.setOnClickListener(view -> loadMap());
+        Button btnClearMap = findViewById(R.id.btnClearMap);
+        btnClearMap.setOnClickListener(view -> {
+            String currentStatus = robotStatusDynamic.getText().toString().toUpperCase();
+            if (currentStatus.contains("RUNNING") || currentStatus.contains("MOVING")) {
+                Toast.makeText(this, "Cannot clear map while Robot is moving!", Toast.LENGTH_LONG).show();
+            } else {
+                myApp.grid().clear();
+                canvasView.invalidate();
+                Toast.makeText(this, "Map Cleared", Toast.LENGTH_SHORT).show();
+            }
+        });
+
         sendbtn = findViewById(R.id.btnSend);
         sendbtn.setOnClickListener(view -> sendChatMessage());
         startbtn = findViewById(R.id.btnRobotStart);
@@ -247,6 +269,48 @@ public class CanvasActivity extends AppCompatActivity {
         }
         // mediaPlayer = MediaPlayer.create(this, R.raw.elevator_music);
         // mediaPlayer.start();
+    }
+
+    private void saveMap() {
+        SharedPreferences prefs = getSharedPreferences("ObstaclePrefs", MODE_PRIVATE);
+        JSONArray array = new JSONArray();
+        for (GridObstacle obs : myApp.grid().getObstacleList()) {
+            try {
+                JSONObject obj = new JSONObject();
+                obj.put("id", obs.getId());
+                obj.put("x", obs.getPosition().getXInt());
+                obj.put("y", obs.getPosition().getYInt());
+                obj.put("facing", obs.getFacing().name());
+                array.put(obj);
+            } catch (JSONException e) {
+                Log.e(TAG, "Failed to save obstacle", e);
+            }
+        }
+        prefs.edit().putString("saved_obstacles", array.toString()).apply();
+        Toast.makeText(this, "Map Saved! (" + array.length() + " obstacles)", Toast.LENGTH_SHORT).show();
+    }
+
+    private void loadMap() {
+        SharedPreferences prefs = getSharedPreferences("ObstaclePrefs", MODE_PRIVATE);
+        String savedData = prefs.getString("saved_obstacles", "[]");
+        try {
+            JSONArray array = new JSONArray(savedData);
+            myApp.grid().clear();
+            for (int i = 0; i < array.length(); i++) {
+                JSONObject obj = array.getJSONObject(i);
+                int x = obj.getInt("x");
+                int y = obj.getInt("y");
+                Facing facing = convertFacing(obj.getString("facing"));
+                
+                GridObstacle obs = GridObstacle.of(x, y, facing);
+                myApp.grid().addObstacle(obs);
+            }
+            canvasView.invalidate();
+            Toast.makeText(this, "Map Loaded! (" + array.length() + " obstacles)", Toast.LENGTH_SHORT).show();
+        } catch (JSONException e) {
+            Log.e(TAG, "Failed to load obstacles", e);
+            Toast.makeText(this, "Failed to load map.", Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void applyInputFilter(EditText input) {

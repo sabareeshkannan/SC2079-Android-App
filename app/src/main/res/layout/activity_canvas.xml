@@ -200,15 +200,65 @@
                 </FrameLayout>
             </LinearLayout>
 
-            <!-- Primary Actions -->
+            <!-- Save/Load Actions -->
             <LinearLayout
-                android:id="@+id/actionButtons"
+                android:id="@+id/saveLoadButtons"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 android:layout_marginHorizontal="24dp"
                 android:orientation="horizontal"
                 app:layout_constraintTop_toBottomOf="@id/inputLayout"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent">
+
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/btnSaveMap"
+                    android:layout_width="0dp"
+                    android:layout_height="40dp"
+                    android:layout_weight="1"
+                    android:layout_marginEnd="8dp"
+                    android:text="SAVE MAP"
+                    android:background="@drawable/selector_btn_holo_blue"
+                    android:textColor="@color/neon_blue"
+                    android:textSize="13sp"
+                    android:textStyle="bold" />
+
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/btnLoadMap"
+                    android:layout_width="0dp"
+                    android:layout_height="40dp"
+                    android:layout_weight="1"
+                    android:layout_marginStart="4dp"
+                    android:layout_marginEnd="4dp"
+                    android:text="LOAD MAP"
+                    android:background="@drawable/selector_btn_holo_green"
+                    android:textColor="@color/neon_green"
+                    android:textSize="13sp"
+                    android:textStyle="bold" />
+
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/btnClearMap"
+                    android:layout_width="0dp"
+                    android:layout_height="40dp"
+                    android:layout_weight="1"
+                    android:layout_marginStart="8dp"
+                    android:text="CLEAR MAP"
+                    android:background="@drawable/selector_btn_holo_red"
+                    android:textColor="@color/neon_red"
+                    android:textSize="13sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <!-- Primary Actions -->
+            <LinearLayout
+                android:id="@+id/actionButtons"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginHorizontal="24dp"
+                android:orientation="horizontal"
+                app:layout_constraintTop_toBottomOf="@id/saveLoadButtons"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent">
 
