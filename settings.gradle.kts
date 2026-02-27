@@ -13,6 +13,6 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "MDP Grp21 Controller"
+rootProject.name = "MDP Grp20 Controller"
 include(":app")
  

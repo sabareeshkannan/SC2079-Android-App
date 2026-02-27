@@ -372,6 +372,12 @@ public class BluetoothActivity extends AppCompatActivity {
                      * }
                      */
                     connectedText.setText("Connected to " + device.getName());
+
+                    // Turn off discoverable switch UI visually
+                    if (discoverSwitch != null && discoverSwitch.isChecked()) {
+                        discoverSwitch.setChecked(false);
+                        animateLightsaber(false);
+                    }
                 }
                 connectedPanel.setVisibility(connected ? View.VISIBLE : View.INVISIBLE);
                 // refresh the device list

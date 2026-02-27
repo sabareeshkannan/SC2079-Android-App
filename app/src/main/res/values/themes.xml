@@ -10,21 +10,21 @@
         <item name="android:windowLightStatusBar">true</item>
         <item name="android:windowBackground">@color/bg_dark</item>
 
-        <item name="toolbarStyle">@style/Widget.MDPGrp21.Toolbar</item>
+        <item name="toolbarStyle">@style/Widget.MDPGrp20.Toolbar</item>
     </style>
 
     <style name="Theme.RobotController" parent="Base.Theme.RobotController" />
 
-    <style name="Widget.MDPGrp21.Toolbar" parent="Widget.Material3.Toolbar">
+    <style name="Widget.MDPGrp20.Toolbar" parent="Widget.Material3.Toolbar">
         <item name="android:background">@color/bg_card</item> <!-- White toolbar -->
         <item name="titleTextColor">@color/text_primary</item>
         <item name="subtitleTextColor">@color/text_secondary</item>
-        <item name="android:titleTextStyle">@style/TextAppearance.MDPGrp21.Toolbar.Title</item>
+        <item name="android:titleTextStyle">@style/TextAppearance.MDPGrp20.Toolbar.Title</item>
         <item name="android:elevation">0dp</item> <!-- Flat, maybe simple border later -->
         <item name="elevation">0dp</item>
     </style>
 
-    <style name="TextAppearance.MDPGrp21.Toolbar.Title" parent="TextAppearance.Material3.TitleLarge">
+    <style name="TextAppearance.MDPGrp20.Toolbar.Title" parent="TextAppearance.Material3.TitleLarge">
         <item name="android:fontFamily">sans-serif-medium</item>
         <item name="android:textSize">20sp</item> <!-- Adjust as needed -->
         <item name="android:textColor">@color/text_primary</item>
