@@ -123,8 +123,8 @@ public sealed interface BluetoothMessage permits BluetoothMessage.CustomMessage,
         @Override
         public String getAsJson() {
             int cmX = x * 10;
-            // Y: (19 - y) * 10 (Top-Left Origin)
-            int cmY = (19 - y) * 10;
+            // Y: y * 10 (Bottom-Left Origin to match Python Cartesian grid)
+            int cmY = y * 10;
             
             if (isRemove) {
                 return String.format(Locale.ENGLISH, "OBSTACLE,%d,%d,%d,-1", id, cmX, cmY);
@@ -144,23 +144,31 @@ public sealed interface BluetoothMessage permits BluetoothMessage.CustomMessage,
     public record ObstaclesMessage(List<GridObstacle> obstacleList) implements BluetoothMessage, JsonMessage {
         @Override
         public String getAsJson() {
-            StringBuilder sb = new StringBuilder("ALG");
-            for (GridObstacle obs : obstacleList) {
-                sb.append("|");
-                int centerX = (obs.getPosition().getXInt() * 10) + 5;
-                int centerY = (obs.getPosition().getYInt() * 10) + 5;
-                
-                int degrees = 90;
-                switch (obs.getFacing()) {
-                    case NORTH: degrees = 90; break;
-                    case EAST: degrees = 0; break;
-                    case SOUTH: degrees = -90; break;
-                    case WEST: degrees = 180; break;
+            try {
+                JSONArray jsonArray = new JSONArray();
+                for (GridObstacle obs : obstacleList) {
+                    JSONObject obj = new JSONObject();
+                    obj.put("id", obs.getId());
+                    // Algorithm expects raw grid identifiers, so no multiplying by 10.
+                    obj.put("x", obs.getPosition().getXInt());
+                    obj.put("y", obs.getPosition().getYInt());
+                    
+                    int pythonDir = 0;
+                    switch (obs.getFacing()) {
+                        case NORTH: pythonDir = 0; break;
+                        case EAST: pythonDir = 2; break;
+                        case SOUTH: pythonDir = 4; break;
+                        case WEST: pythonDir = 6; break;
+                    }
+                    obj.put("d", pythonDir);
+                    jsonArray.put(obj);
                 }
-                
-                sb.append(centerX).append(",").append(centerY).append(",").append(degrees).append(",").append(obs.getId());
+                // Prefix exact string to trigger PC/Task1.py parsing
+                return "OBSTACLES," + jsonArray.toString();
+            } catch (JSONException e) {
+                Log.e(TAG, "Error building OBSTACLES json payload", e);
+                return "OBSTACLES,[]";
             }
-            return sb.toString();
         }
     }
     public static BluetoothMessage ofObstaclesMessage(List<GridObstacle> obstacleList) {
