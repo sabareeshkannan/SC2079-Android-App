@@ -65,78 +65,72 @@ public class CanvasTouchController implements View.OnTouchListener {
                 break;
 
             case MotionEvent.ACTION_UP:
-                final int upX = x; //for readability
-                final int upY = y; //for readability
-                Log.d(TAG, "Touched up at (" + upX + ", " + upY + ")");
+                v.performClick();
+                Log.d(TAG, "Touched up at (" + x + ", " + y + ")");
                 if (selectedObstacle.isPresent()) {
                     GridObstacle obstacle = selectedObstacle.get();
                     obstacle.setSelected(false);
                     int oldX = obstacle.getPosition().getXInt();
                     int oldY = obstacle.getPosition().getYInt();
-                    Log.d(TAG, downX + " " + downY + " " + upX + " " + upY);
-                    if (downX == upX && downY == upY) { // if the finger is lifted on the same cell
-                    // Rotate obstacle clockwise if lifted on the same cell
-                    obstacle.rotateClockwise();
-                    Log.d(TAG, "Rotated obstacle clockwise at " + obstacle.getPosition());
-                    canvasView.invalidate(); // Refresh canvas
-                    rebuildRemoteMap();
-                } else if (!grid.isInsideGrid(upX, upY)) { // if finger lifted outside of grid
-                    // Remove if lifted outside the grid
-                    grid.removeObstacle(oldX, oldY);
-                    Log.d(TAG, "Removed obstacle at (" + oldX + ", " + oldY + ")");
-                    canvasView.invalidate(); // Refresh canvas
-                    rebuildRemoteMap();
-                } else if (!grid.hasObstacle(upX, upY)) { // if finger lifted on empty cell
-                    // Move obstacle only if lifted on an empty cell
-                    obstacle.updatePosition(upX, upY);
-                    Log.d(TAG, "Moved obstacle from (" + oldX + ", " + oldY + ") to (" + upX + ", " + upY + ")");
-                    Toast.makeText(myApp, "Moved obst to (" + upX + ", " + upY + ")", Toast.LENGTH_SHORT).show();
-                    canvasView.invalidate(); // Refresh canvas
-                    rebuildRemoteMap();
+                    Log.d(TAG, downX + " " + downY + " " + x + " " + y);
+                    if (downX == x && downY == y) { // if the finger is lifted on the same cell
+                        // Rotate obstacle clockwise if lifted on the same cell
+                        obstacle.rotateClockwise();
+                        Log.d(TAG, "Rotated obstacle clockwise at " + obstacle.getPosition());
+                        canvasView.invalidate(); // Refresh canvas
+                        rebuildRemoteMap();
+                    } else if (!grid.isInsideGrid(x, y)) { // if finger lifted outside of grid
+                        // Remove if lifted outside the grid
+                        grid.removeObstacle(oldX, oldY);
+                        Log.d(TAG, "Removed obstacle at (" + oldX + ", " + oldY + ")");
+                        canvasView.invalidate(); // Refresh canvas
+                        rebuildRemoteMap();
+                    } else if (!grid.hasObstacle(x, y)) { // if finger lifted on empty cell
+                        // Move obstacle only if lifted on an empty cell
+                        obstacle.updatePosition(x, y);
+                        Log.d(TAG, "Moved obstacle from (" + oldX + ", " + oldY + ") to (" + x + ", " + y + ")");
+                        Toast.makeText(myApp, "Moved obst to (" + x + ", " + y + ")", Toast.LENGTH_SHORT).show();
+                        canvasView.invalidate(); // Refresh canvas
+                        rebuildRemoteMap();
+                    }
+                } else {
+                    // If no obstacle was selected, add a new one
+                    if (grid.isInsideGrid(x, y) && !grid.hasObstacle(x, y)) {
+                        GridObstacle obstacle = GridObstacle.of(x, y);
+                        grid.addObstacle(obstacle);
+                        Log.d(TAG, "Added new obstacle at (" + x + ", " + y + ")");
+                        Toast.makeText(myApp, "Added obst at (" + x + ", " + y + ")", Toast.LENGTH_SHORT).show();
+                        canvasView.invalidate(); // Refresh canvas
+                        rebuildRemoteMap();
+                    }
                 }
-            } else {
-                // If no obstacle was selected, add a new one
-                if (grid.isInsideGrid(upX, upY) && !grid.hasObstacle(upX, upY)) {
-                    GridObstacle obstacle = GridObstacle.of(upX, upY);
-                    grid.addObstacle(obstacle);
-                    Log.d(TAG, "Added new obstacle at (" + upX + ", " + upY + ")");
-                    Toast.makeText(myApp, "Added obst at (" + upX + ", " + upY + ")", Toast.LENGTH_SHORT).show();
-                    canvasView.invalidate(); // Refresh canvas
-                    rebuildRemoteMap();
-                }
-            }
-            selectedObstacle = Optional.empty(); // Clear selection
-            break;
+                selectedObstacle = Optional.empty(); // Clear selection
+                break;
     }
     return true;
 }
 
-private void rebuildRemoteMap() {
-    if (myApp.btConnection() == null) return;
-    
-    // Wipe remote RPi Bank
-    BluetoothMessage msgClear = BluetoothMessage.ofPlainStringMessage("CLEAR");
-    myApp.btConnection().sendMessage(msgClear.getAsJsonMessage().getAsJson());
-    
-    // Broadcast clean map sequentially
-    for (GridObstacle obs : grid.getObstacleList()) {
-        BluetoothMessage msg = BluetoothMessage.ofObstacleEventMessage(
-            obs.getId(), 
-            obs.getPosition().getXInt(), 
-            obs.getPosition().getYInt(), 
-            obs.getFacing(), 
-            false
-        );
-        myApp.btConnection().sendMessage(msg.getAsJsonMessage().getAsJson());
-    }
-}
-                selectedObstacle = Optional.empty(); // Clear selection
-                break;
+    private void rebuildRemoteMap() {
+        if (myApp.btConnection() == null) return;
+        
+        // Wipe remote RPi Bank
+        BluetoothMessage msgClear = BluetoothMessage.ofPlainStringMessage("CLEAR");
+        String strClear = msgClear.getAsJsonMessage().getAsJson();
+        myApp.btConnection().sendMessage(strClear);
+        activity.logMessage("SENT", strClear, "#00BCD4");
+        
+        // Broadcast clean map sequentially
+        for (GridObstacle obs : grid.getObstacleList()) {
+            BluetoothMessage msg = BluetoothMessage.ofObstacleEventMessage(
+                obs.getId(), 
+                obs.getPosition().getXInt(), 
+                obs.getPosition().getYInt(), 
+                obs.getFacing(), 
+                false
+            );
+            String msgStr = msg.getAsJsonMessage().getAsJson();
+            myApp.btConnection().sendMessage(msgStr);
+            activity.logMessage("SENT", msgStr, "#00BCD4");
         }
-        return true;
-    }
-
-    private String convertFacingToInt(com.mdp26.mdp20.Facing facing) {
-        return String.valueOf(facing.getMappedCode());
     }
 }
