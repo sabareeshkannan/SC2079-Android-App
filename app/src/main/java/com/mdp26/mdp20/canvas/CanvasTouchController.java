@@ -6,19 +6,22 @@ import android.view.View;
 import android.content.Context;
 import android.widget.Toast;
 
-
 import com.mdp26.mdp20.MyApplication;
 import com.mdp26.mdp20.bluetooth.BluetoothMessage;
 import com.mdp26.mdp20.Facing;
 
 import java.util.Optional;
 
+import com.mdp26.mdp20.CanvasActivity;
+
 /**
  * Handles all touch interactions with the canvas. Namely:
  * <ul>
- *     <li>If an empty cell is selected, an obstacle is placed when the finger is lifted
- *     Obstacle replacement is not allowed if the finger is lifted over an occupied grid cell</li>
- *     <li>Touch & hold in an occupied spot, then drag to move/remove obstacle</li>
+ * <li>If an empty cell is selected, an obstacle is placed when the finger is
+ * lifted
+ * Obstacle replacement is not allowed if the finger is lifted over an occupied
+ * grid cell</li>
+ * <li>Touch & hold in an occupied spot, then drag to move/remove obstacle</li>
  * </ul>
  * Extra: Uses vibration to feedback to the user.
  */
@@ -26,16 +29,19 @@ public class CanvasTouchController implements View.OnTouchListener {
     private final static String TAG = "CanvasTouchController";
     private final Grid grid;
     private final MyApplication myApp;
+    private final CanvasActivity activity;
     private Optional<GridObstacle> selectedObstacle = Optional.empty();
     private final int SELECTION_RADIUS;
+    private static final float SELECTION_RADIUS_DP = 2f;
 
     // to track x and y touched down on
     private int downX = 0, downY = 0;
 
-    public CanvasTouchController(MyApplication myApp) {
+    public CanvasTouchController(CanvasActivity activity, MyApplication myApp) {
+        this.activity = activity;
         this.myApp = myApp;
         this.grid = myApp.grid();
-        this.SELECTION_RADIUS = convertDpToPx(myApp.getApplicationContext(), 2); // 2dp
+        this.SELECTION_RADIUS = convertDpToPx(myApp.getApplicationContext(), SELECTION_RADIUS_DP);
     }
 
     private static int convertDpToPx(Context context, float dp) {
@@ -107,8 +113,8 @@ public class CanvasTouchController implements View.OnTouchListener {
                 selectedObstacle = Optional.empty(); // Clear selection
                 break;
     }
-    return true;
-}
+        return true;
+    }
 
     private void rebuildRemoteMap() {
         if (myApp.btConnection() == null) return;

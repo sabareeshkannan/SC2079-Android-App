@@ -3,6 +3,7 @@ package com.mdp26.mdp20;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.text.HtmlCompat;
 import com.google.android.material.tabs.TabLayout;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
@@ -35,16 +36,11 @@ import com.mdp26.mdp20.canvas.CanvasView;
 import com.mdp26.mdp20.canvas.GridObstacle;
 import com.mdp26.mdp20.canvas.RobotView;
 
-
 public class CanvasActivity extends AppCompatActivity {
     private TextView receivedMessages;
     private TextView robotStatusDynamic;
     private ScrollView scrollReceivedMessages;
     private Spinner spinnerRobotFacing;
-    private Button btnInitializeRobot;
-    private Button btnSendData;
-    private Button sendbtn;
-    private Button startbtn;
     private EditText inputX;
     private EditText inputY;
     private EditText chatInputBox;
@@ -52,7 +48,7 @@ public class CanvasActivity extends AppCompatActivity {
     private Facing facingDirection;
     private final String TAG = "CanvasActivity";
     private MyApplication myApp;
-    private BroadcastReceiver msgReceiver; //receive bluetooth messages
+    private BroadcastReceiver msgReceiver; // receive bluetooth messages
     private CanvasView canvasView;
     private RobotView robotView;
     private CanvasTouchController canvasTouchController;
@@ -62,6 +58,30 @@ public class CanvasActivity extends AppCompatActivity {
     private ConstraintLayout layoutMapMode;
     private ConstraintLayout layoutLogMode;
     private TabLayout tabLayout;
+
+    public void logMessage(String direction, String message, String colorHex) {
+        if (receivedMessages != null) {
+            String htmlText = "<br><font color='" + colorHex + "'><b>[" + direction + "]</b> " + message + "</font>";
+            receivedMessages.append(HtmlCompat.fromHtml(htmlText, HtmlCompat.FROM_HTML_MODE_LEGACY));
+            scrollReceivedMessages.post(() -> scrollReceivedMessages.fullScroll(View.FOCUS_DOWN));
+        }
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        if (receivedMessages != null) {
+            outState.putCharSequence("LOGS", receivedMessages.getText());
+        }
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        if (receivedMessages != null) {
+            receivedMessages.setText(savedInstanceState.getCharSequence("LOGS"));
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,16 +93,14 @@ public class CanvasActivity extends AppCompatActivity {
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
-        toolbar.setNavigationOnClickListener(v -> onBackPressed());
-
-
+        toolbar.setNavigationOnClickListener(v -> getOnBackPressedDispatcher().onBackPressed());
 
         myApp = (MyApplication) getApplication();
 
         // reset robot pos and dir
-        myApp.robot().updatePosition(1,1).updateFacing(Facing.NORTH);
+        myApp.robot().updatePosition(1, 1).updateFacing(Facing.NORTH);
 
-        canvasTouchController = new CanvasTouchController(myApp);
+        canvasTouchController = new CanvasTouchController(this, myApp);
 
         canvasView = findViewById(R.id.canvasView);
         canvasView.setGrid(myApp.grid());
@@ -94,7 +112,8 @@ public class CanvasActivity extends AppCompatActivity {
         bindUI(); // Calls method to initialize UI components
 
         msgReceiver = new BluetoothMessageReceiver(BluetoothMessageParser.ofDefault(), this::onMsgReceived);
-        getApplicationContext().registerReceiver(msgReceiver, new IntentFilter(BluetoothMessageReceiver.ACTION_MSG_READ), RECEIVER_NOT_EXPORTED);
+        getApplicationContext().registerReceiver(msgReceiver,
+                new IntentFilter(BluetoothMessageReceiver.ACTION_MSG_READ), RECEIVER_NOT_EXPORTED);
     }
 
     @Override
@@ -117,8 +136,8 @@ public class CanvasActivity extends AppCompatActivity {
         inputY = findViewById(R.id.inputY);
         applyInputFilter(inputX);
         applyInputFilter(inputY);
-        inputX.setText(Integer.toString(myApp.robot().getPosition().getXInt()));
-        inputY.setText(Integer.toString(myApp.robot().getPosition().getYInt()));
+        inputX.setText(String.valueOf(myApp.robot().getPosition().getXInt()));
+        inputY.setText(String.valueOf(myApp.robot().getPosition().getYInt()));
         chatInputBox = findViewById(R.id.chatInputBox);
 
         receivedMessages = findViewById(R.id.ReceiveMsgTextView);
@@ -132,36 +151,42 @@ public class CanvasActivity extends AppCompatActivity {
         setupSpinner();
 
         // Initialize buttons
-        btnSendData = findViewById(R.id.btnSendData);
+        Button btnSendData = findViewById(R.id.btnSendData);
         btnSendData.setOnClickListener(view -> sendData());
-        btnInitializeRobot = findViewById(R.id.btnInitializeRobot);
+        Button btnInitializeRobot = findViewById(R.id.btnInitializeRobot);
         btnInitializeRobot.setOnClickListener(view -> initializeRobotFromInput());
-        
-        Button btnSaveMap = findViewById(R.id.btnSaveMap);
-        btnSaveMap.setOnClickListener(view -> saveMap());
-        Button btnLoadMap = findViewById(R.id.btnLoadMap);
-        btnLoadMap.setOnClickListener(view -> loadMap());
-        Button btnClearMap = findViewById(R.id.btnClearMap);
-        btnClearMap.setOnClickListener(view -> {
-            String currentStatus = robotStatusDynamic.getText().toString().toUpperCase();
-            if (currentStatus.contains("RUNNING") || currentStatus.contains("MOVING")) {
-                Toast.makeText(this, "Cannot clear map while Robot is moving!", Toast.LENGTH_LONG).show();
-            } else {
-                if (myApp.btConnection() != null) {
-                    BluetoothMessage msgClear = BluetoothMessage.ofPlainStringMessage("CLEAR");
-                    myApp.btConnection().sendMessage(msgClear.getAsJsonMessage().getAsJson());
-                }
-                myApp.grid().clear();
-                canvasView.invalidate();
-                Toast.makeText(this, "Map Cleared", Toast.LENGTH_SHORT).show();
-            }
-        });
 
-        sendbtn = findViewById(R.id.btnSend);
+        Button btnSaveMap = findViewById(R.id.btnSaveMap);
+        if (btnSaveMap != null)
+            btnSaveMap.setOnClickListener(view -> saveMap());
+        Button btnLoadMap = findViewById(R.id.btnLoadMap);
+        if (btnLoadMap != null)
+            btnLoadMap.setOnClickListener(view -> loadMap());
+        Button btnClearMap = findViewById(R.id.btnClearMap);
+        if (btnClearMap != null)
+            btnClearMap.setOnClickListener(view -> {
+                String currentStatus = robotStatusDynamic.getText().toString().toUpperCase();
+                if (currentStatus.contains("RUNNING") || currentStatus.contains("MOVING")) {
+                    Toast.makeText(this, "Cannot clear map while Robot is moving!", Toast.LENGTH_LONG).show();
+                } else {
+                    if (myApp.btConnection() != null) {
+                        BluetoothMessage msgClear = BluetoothMessage.ofPlainStringMessage("CLEAR");
+                        String msgStr = msgClear.getAsJsonMessage().getAsJson();
+                        myApp.btConnection().sendMessage(msgStr);
+                        logMessage("SENT", msgStr, "#00BCD4");
+                    }
+                    myApp.grid().clear();
+                    canvasView.invalidate();
+                    Toast.makeText(this, "Map Cleared", Toast.LENGTH_SHORT).show();
+                }
+            });
+
+        Button sendbtn = findViewById(R.id.btnSend);
         sendbtn.setOnClickListener(view -> sendChatMessage());
-        startbtn = findViewById(R.id.btnRobotStart);
+        Button startbtn = findViewById(R.id.btnRobotStart);
         startbtn.setOnClickListener(view -> {
-            if (myApp.btConnection() != null) showConfirmationDialog();
+            if (myApp.btConnection() != null)
+                showConfirmationDialog();
         });
 
         // Bind movement buttons
@@ -177,7 +202,7 @@ public class CanvasActivity extends AppCompatActivity {
             myApp.robot().moveBackward();
             robotView.invalidate();
         });
-        
+
         // Spot Rotation Controls
         findViewById(R.id.btnRobotRight).setOnClickListener(view -> {
             if (myApp.btConnection() != null)
@@ -227,16 +252,19 @@ public class CanvasActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onTabUnselected(TabLayout.Tab tab) {}
+            public void onTabUnselected(TabLayout.Tab tab) {
+            }
 
             @Override
-            public void onTabReselected(TabLayout.Tab tab) {}
+            public void onTabReselected(TabLayout.Tab tab) {
+            }
         });
     }
 
     private void startRobot() {
         if (myApp.btConnection() != null) {
             myApp.btConnection().sendMessage("BEGIN");
+            logMessage("SENT", "BEGIN", "#00BCD4");
         }
         if (mediaPlayer != null) {
             mediaPlayer.stop();
@@ -259,13 +287,15 @@ public class CanvasActivity extends AppCompatActivity {
                 .show();
     }
 
-    private void sendData(){
+    private void sendData() {
         if (myApp.btConnection() == null) {
             Toast.makeText(CanvasActivity.this, "Error: No Bluetooth Connection", Toast.LENGTH_SHORT).show();
             return;
         }
         BluetoothMessage msg = BluetoothMessage.ofObstaclesMessage(this.myApp.grid().getObstacleList());
-        myApp.btConnection().sendMessage(msg.getAsJsonMessage().getAsJson());
+        String msgStr = msg.getAsJsonMessage().getAsJson();
+        myApp.btConnection().sendMessage(msgStr);
+        logMessage("SENT", msgStr, "#00BCD4");
         Toast.makeText(CanvasActivity.this, "Data sent successfully", Toast.LENGTH_SHORT).show();
         if (mediaPlayer != null) {
             mediaPlayer.stop();
@@ -305,27 +335,31 @@ public class CanvasActivity extends AppCompatActivity {
         String savedData = prefs.getString("saved_obstacles", "[]");
         try {
             JSONArray array = new JSONArray(savedData);
-            
+
             // First, tell the RPi to wipe its memory bank
             if (myApp.btConnection() != null) {
                 BluetoothMessage msgClear = BluetoothMessage.ofPlainStringMessage("CLEAR");
-                myApp.btConnection().sendMessage(msgClear.getAsJsonMessage().getAsJson());
+                String msgStr = msgClear.getAsJsonMessage().getAsJson();
+                myApp.btConnection().sendMessage(msgStr);
+                logMessage("SENT", msgStr, "#00BCD4");
             }
             myApp.grid().clear();
-            
+
             for (int i = 0; i < array.length(); i++) {
                 JSONObject obj = array.getJSONObject(i);
                 int x = obj.getInt("x");
                 int y = obj.getInt("y");
                 Facing facing = convertFacing(obj.getString("facing"));
-                
+
                 GridObstacle obs = GridObstacle.of(x, y, facing);
                 myApp.grid().addObstacle(obs);
-                
+
                 // Blast the newly loaded obstacle out to the RPi memory bank
                 if (myApp.btConnection() != null) {
                     BluetoothMessage msg = BluetoothMessage.ofObstacleEventMessage(obs.getId(), x, y, facing, false);
-                    myApp.btConnection().sendMessage(msg.getAsJsonMessage().getAsJson());
+                    String msgStr = msg.getAsJsonMessage().getAsJson();
+                    myApp.btConnection().sendMessage(msgStr);
+                    logMessage("SENT", msgStr, "#00BCD4");
                 }
             }
             canvasView.invalidate();
@@ -342,22 +376,22 @@ public class CanvasActivity extends AppCompatActivity {
             public CharSequence filter(CharSequence source, int start, int end, Spanned dest, int dstart, int dend) {
                 try {
                     int inputVal = Integer.parseInt(dest.toString() + source.toString());
-                    if (inputVal >= 1 && inputVal <= 3) return null;
+                    if (inputVal >= 1 && inputVal <= 3)
+                        return null;
                 } catch (NumberFormatException e) {
                     return "";
                 }
                 return "";
             }
         };
-        input.setFilters(new InputFilter[]{minMaxFilter});
+        input.setFilters(new InputFilter[] { minMaxFilter });
     }
 
     private void setupSpinner() {
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(
                 this,
                 R.array.robot_facing_options,
-                android.R.layout.simple_spinner_item
-        );
+                android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerRobotFacing.setAdapter(adapter);
         spinnerRobotFacing.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -378,6 +412,7 @@ public class CanvasActivity extends AppCompatActivity {
 
         if (!message.isEmpty()) {
             myApp.btConnection().sendMessage(message); // Send the message via Bluetooth
+            logMessage("SENT", message, "#00BCD4");
             chatInputBox.setText(""); // Clear the input field after sending
             Toast.makeText(this, "Message sent: " + message, Toast.LENGTH_SHORT).show();
         } else {
@@ -404,7 +439,9 @@ public class CanvasActivity extends AppCompatActivity {
 
         if (myApp.btConnection() != null) {
             BluetoothMessage msg = BluetoothMessage.ofRobotStateMessage(x, y, facing);
-            myApp.btConnection().sendMessage(msg.getAsJsonMessage().getAsJson());
+            String msgStr = msg.getAsJsonMessage().getAsJson();
+            myApp.btConnection().sendMessage(msgStr);
+            logMessage("SENT", msgStr, "#00BCD4");
         }
 
         robotView.invalidate();
@@ -434,7 +471,7 @@ public class CanvasActivity extends AppCompatActivity {
     private void onMsgReceived(BluetoothMessage btMsg) {
         if (btMsg instanceof BluetoothMessage.PlainStringMessage m) {
             // show on ui
-            receivedMessages.append("\n" + m.rawMsg() + "\n");
+            logMessage("RECV", m.rawMsg(), "#4CAF50");
             if (m.rawMsg().equals("[info] Commands and path received Algo API. Robot is ready to move.")) {
                 if (mediaPlayer != null) {
                     mediaPlayer.stop();
@@ -446,7 +483,7 @@ public class CanvasActivity extends AppCompatActivity {
         } else if (btMsg instanceof BluetoothMessage.RobotStatusMessage m) {
             // show on ui
             robotStatusDynamic.setText(m.status().toUpperCase());
-            receivedMessages.append("\n[status] " + m.rawMsg()+ "\n"); // just print on ui for now
+            logMessage("RECV", "[status] " + m.rawMsg(), "#4CAF50");
             if (m.status().equals("finished")) {
                 if (mediaPlayer != null) {
                     mediaPlayer.stop();
@@ -459,16 +496,16 @@ public class CanvasActivity extends AppCompatActivity {
             // Update Status HUD with Target Info
             String targetStatus = String.format("TARGET %d AT OBS %d", m.targetId(), m.obstacleId());
             robotStatusDynamic.setText(targetStatus);
-            
+
             // update obstacle's target
             myApp.grid().updateObstacleTarget(m.obstacleId(), m.targetId());
             // update facing if provided
             if (m.direction() != -1) {
                 myApp.grid().findObstacleWithId(m.obstacleId())
-                    .ifPresent(obs -> obs.setFacing(Facing.getFacingFromCode(m.direction())));
+                        .ifPresent(obs -> obs.setFacing(Facing.getFacingFromCode(m.direction())));
             }
             canvasView.invalidate();
-            receivedMessages.append("\n[image-rec] " + m.rawMsg() + "\n");
+            logMessage("RECV", "[image-rec] " + m.rawMsg(), "#4CAF50");
         } else if (btMsg instanceof BluetoothMessage.RobotPositionMessage m) {
             // Update Status to MOVING TO (X, Y, DIR)
             String dirStr = switch (m.direction()) {
@@ -479,14 +516,12 @@ public class CanvasActivity extends AppCompatActivity {
                 default -> "?";
             };
             robotStatusDynamic.setText(String.format("MOVING TO (%d, %d, %s)", m.x(), m.y(), dirStr));
-            
+
             // update robot's pos, then invalidate ui
             myApp.robot().updatePosition(m.x(), m.y()).updateFacing(Facing.getFacingFromCode(m.direction()));
             robotView.invalidate();
-            receivedMessages.append("\n[location] " + m.rawMsg() + "\n");
+            logMessage("RECV", "[location] " + m.rawMsg(), "#4CAF50");
         }
-        scrollReceivedMessages.post(() -> scrollReceivedMessages.fullScroll(View.FOCUS_DOWN));
     }
-
 
 }
