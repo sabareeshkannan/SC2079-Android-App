@@ -144,31 +144,9 @@ public sealed interface BluetoothMessage permits BluetoothMessage.CustomMessage,
     public record ObstaclesMessage(List<GridObstacle> obstacleList) implements BluetoothMessage, JsonMessage {
         @Override
         public String getAsJson() {
-            try {
-                JSONArray jsonArray = new JSONArray();
-                for (GridObstacle obs : obstacleList) {
-                    JSONObject obj = new JSONObject();
-                    obj.put("id", obs.getId());
-                    // Algorithm expects raw grid identifiers, so no multiplying by 10.
-                    obj.put("x", obs.getPosition().getXInt());
-                    obj.put("y", obs.getPosition().getYInt());
-                    
-                    int pythonDir = 0;
-                    switch (obs.getFacing()) {
-                        case NORTH: pythonDir = 0; break;
-                        case EAST: pythonDir = 2; break;
-                        case SOUTH: pythonDir = 4; break;
-                        case WEST: pythonDir = 6; break;
-                    }
-                    obj.put("d", pythonDir);
-                    jsonArray.put(obj);
-                }
-                // Prefix exact string to trigger PC/Task1.py parsing
-                return "OBSTACLES," + jsonArray.toString();
-            } catch (JSONException e) {
-                Log.e(TAG, "Error building OBSTACLES json payload", e);
-                return "OBSTACLES,[]";
-            }
+            // Android sends individual "OBSTACLE" messages to the RPi memory bank.
+            // When we click "Send Data", we just send "PATH" to trigger the RPi to forward its bank to the PC.
+            return "PATH";
         }
     }
     public static BluetoothMessage ofObstaclesMessage(List<GridObstacle> obstacleList) {
