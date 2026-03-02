@@ -170,10 +170,9 @@ public class CanvasActivity extends AppCompatActivity {
                     Toast.makeText(this, "Cannot clear map while Robot is moving!", Toast.LENGTH_LONG).show();
                 } else {
                     if (myApp.btConnection() != null) {
-                        BluetoothMessage msgClear = BluetoothMessage.ofPlainStringMessage("CLEAR");
-                        String msgStr = msgClear.getAsJsonMessage().getAsJson();
-                        myApp.btConnection().sendMessage(msgStr);
-                        logMessage("SENT", msgStr, "#00BCD4");
+                        String strClear = "CLEAR\n";
+                        myApp.btConnection().sendMessage(strClear);
+                        logMessage("SENT", "CLEAR", "#00BCD4");
                     }
                     myApp.grid().clear();
                     canvasView.invalidate();
@@ -338,10 +337,9 @@ public class CanvasActivity extends AppCompatActivity {
 
             // First, tell the RPi to wipe its memory bank
             if (myApp.btConnection() != null) {
-                BluetoothMessage msgClear = BluetoothMessage.ofPlainStringMessage("CLEAR");
-                String msgStr = msgClear.getAsJsonMessage().getAsJson();
-                myApp.btConnection().sendMessage(msgStr);
-                logMessage("SENT", msgStr, "#00BCD4");
+                String strClear = "CLEAR\n";
+                myApp.btConnection().sendMessage(strClear);
+                logMessage("SENT", "CLEAR", "#00BCD4");
             }
             myApp.grid().clear();
 
@@ -357,9 +355,9 @@ public class CanvasActivity extends AppCompatActivity {
                 // Blast the newly loaded obstacle out to the RPi memory bank
                 if (myApp.btConnection() != null) {
                     BluetoothMessage msg = BluetoothMessage.ofObstacleEventMessage(obs.getId(), x, y, facing, false);
-                    String msgStr = msg.getAsJsonMessage().getAsJson();
+                    String msgStr = msg.getAsJsonMessage().getAsJson() + "\n"; // Add newline
                     myApp.btConnection().sendMessage(msgStr);
-                    logMessage("SENT", msgStr, "#00BCD4");
+                    logMessage("SENT", msg.getAsJsonMessage().getAsJson(), "#00BCD4"); // Log original JSON without newline
                 }
             }
             canvasView.invalidate();

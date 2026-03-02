@@ -120,10 +120,9 @@ public class CanvasTouchController implements View.OnTouchListener {
         if (myApp.btConnection() == null) return;
         
         // Wipe remote RPi Bank
-        BluetoothMessage msgClear = BluetoothMessage.ofPlainStringMessage("CLEAR");
-        String strClear = msgClear.getAsJsonMessage().getAsJson();
+        String strClear = "CLEAR\n";
         myApp.btConnection().sendMessage(strClear);
-        activity.logMessage("SENT", strClear, "#00BCD4");
+        activity.logMessage("SENT", "CLEAR", "#00BCD4");
         
         // Broadcast clean map sequentially
         for (GridObstacle obs : grid.getObstacleList()) {
@@ -134,9 +133,9 @@ public class CanvasTouchController implements View.OnTouchListener {
                 obs.getFacing(), 
                 false
             );
-            String msgStr = msg.getAsJsonMessage().getAsJson();
+            String msgStr = msg.getAsJsonMessage().getAsJson() + "\n";
             myApp.btConnection().sendMessage(msgStr);
-            activity.logMessage("SENT", msgStr, "#00BCD4");
+            activity.logMessage("SENT", msg.getAsJsonMessage().getAsJson(), "#00BCD4");
         }
     }
 }

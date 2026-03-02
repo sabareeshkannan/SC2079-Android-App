@@ -356,9 +356,7 @@ public class BluetoothActivity extends AppCompatActivity {
             if (device != null) {
                 Log.d(TAG, "Connected to " + device.getName() + ": " + connected);
                 if (!connected) {
-                    // let other device reconnect
-                    // enableDeviceDiscovery();
-                    // and also initiate reconnection
+                    // Let other device reconnect or initiate reconnection
                     Toast.makeText(this, "Lost Connection. Retrying in 3s...", Toast.LENGTH_SHORT).show();
                     new android.os.Handler(android.os.Looper.getMainLooper()).postDelayed(() -> {
                         Log.d(TAG, "Attempting auto-reconnect...");

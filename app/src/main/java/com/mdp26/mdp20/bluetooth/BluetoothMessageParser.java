@@ -64,8 +64,8 @@ public interface BluetoothMessageParser extends Function<String, BluetoothMessag
                     }
                 }
                 case "TARGET", "IMAGE-REC" -> {
-                    // TARGET,<ObstacleID>,<TargetID>
-                    // TARGET,<ObstacleID>,<TargetID>,<Direction> (Optional)
+                    // Python Format: TARGET,<TargetID>,<ObstacleID>
+                    // Python Format: TARGET,<TargetID>,<ObstacleID>,<Direction> (Optional)
                     int[] intParams = tryGetIntParams(params, 2);
                     if (params.length > 3) {
                          // Attempt to parse direction
@@ -75,9 +75,9 @@ public interface BluetoothMessageParser extends Function<String, BluetoothMessag
                          } catch (NumberFormatException e) {
                               dir = parseDirection(params[3].trim());
                          }
-                         ret = BluetoothMessage.ofTargetFoundMessage(msg, intParams[0], intParams[1], dir);
+                         ret = BluetoothMessage.ofTargetFoundMessage(msg, intParams[1], intParams[0], dir);
                     } else {
-                         ret = BluetoothMessage.ofTargetFoundMessage(msg, intParams[0], intParams[1]);
+                         ret = BluetoothMessage.ofTargetFoundMessage(msg, intParams[1], intParams[0]);
                     }
                 }
                 default -> ret = BluetoothMessage.ofPlainStringMessage(msg);
