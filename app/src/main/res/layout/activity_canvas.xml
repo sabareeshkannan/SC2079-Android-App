@@ -200,65 +200,16 @@
                 </FrameLayout>
             </LinearLayout>
 
-            <!-- Save/Load Actions -->
-            <LinearLayout
-                android:id="@+id/saveLoadButtons"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:layout_marginHorizontal="24dp"
-                android:orientation="horizontal"
-                app:layout_constraintTop_toBottomOf="@id/inputLayout"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent">
-
-                <androidx.appcompat.widget.AppCompatButton
-                    android:id="@+id/btnSaveMap"
-                    android:layout_width="0dp"
-                    android:layout_height="40dp"
-                    android:layout_weight="1"
-                    android:layout_marginEnd="8dp"
-                    android:text="SAVE MAP"
-                    android:background="@drawable/selector_btn_holo_blue"
-                    android:textColor="@color/neon_blue"
-                    android:textSize="13sp"
-                    android:textStyle="bold" />
-
-                <androidx.appcompat.widget.AppCompatButton
-                    android:id="@+id/btnLoadMap"
-                    android:layout_width="0dp"
-                    android:layout_height="40dp"
-                    android:layout_weight="1"
-                    android:layout_marginStart="4dp"
-                    android:layout_marginEnd="4dp"
-                    android:text="LOAD MAP"
-                    android:background="@drawable/selector_btn_holo_green"
-                    android:textColor="@color/neon_green"
-                    android:textSize="13sp"
-                    android:textStyle="bold" />
-
-                <androidx.appcompat.widget.AppCompatButton
-                    android:id="@+id/btnClearMap"
-                    android:layout_width="0dp"
-                    android:layout_height="40dp"
-                    android:layout_weight="1"
-                    android:layout_marginStart="8dp"
-                    android:text="CLEAR MAP"
-                    android:background="@drawable/selector_btn_holo_red"
-                    android:textColor="@color/neon_red"
-                    android:textSize="13sp"
-                    android:textStyle="bold" />
-            </LinearLayout>
-
+                <!-- Note: Save/Load layout moved to side of D-Pad to save space -->
             <!-- Primary Actions -->
             <LinearLayout
                 android:id="@+id/actionButtons"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
+                android:layout_marginTop="12dp"
                 android:layout_marginHorizontal="24dp"
                 android:orientation="horizontal"
-                app:layout_constraintTop_toBottomOf="@id/saveLoadButtons"
+                app:layout_constraintTop_toBottomOf="@id/inputLayout"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent">
 
@@ -291,83 +242,134 @@
                     android:stateListAnimator="@null"/>
             </LinearLayout>
 
-            <!-- Directional Controls -->
-            <GridLayout
-                android:id="@+id/directionalControls"
-                android:layout_width="wrap_content"
+            <!-- Combined D-Pad and Save/Load Box -->
+            <LinearLayout
+                android:id="@+id/controlsAndSaveLayout"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:columnCount="3"
-                android:rowCount="2"
-                android:background="@drawable/btn_dpad_neumorphic"
-                android:padding="4dp"
+                android:layout_marginTop="12dp"
+                android:layout_marginHorizontal="24dp"
+                android:orientation="horizontal"
+                android:gravity="center"
                 app:layout_constraintTop_toBottomOf="@id/actionButtons"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent">
 
-                <!-- Row 0: Arc Turns & Forward -->
-                <ImageButton
-                    android:id="@+id/btnRobotArcLeft"
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
-                    android:src="@drawable/ic_turn_left_arc"
-                    android:background="?attr/selectableItemBackgroundBorderless"
-                    android:scaleType="fitCenter"
-                    android:padding="10dp"
-                    app:tint="@color/primary"/>
+                <!-- Save/Load Actions Stacked -->
+                <LinearLayout
+                    android:id="@+id/saveLoadButtonsStack"
+                    android:layout_width="140dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="20dp"
+                    android:orientation="vertical"
+                    android:gravity="center_vertical">
 
-                <ImageButton
-                    android:id="@+id/btnRobotForward"
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
-                    android:src="@drawable/ic_arrow_up"
-                    android:background="?attr/selectableItemBackgroundBorderless"
-                    android:scaleType="fitCenter"
-                    android:padding="10dp"
-                    app:tint="@color/primary"/>
+                    <androidx.appcompat.widget.AppCompatButton
+                        android:id="@+id/btnSaveMap"
+                        android:layout_width="match_parent"
+                        android:layout_height="32dp"
+                        android:layout_marginBottom="6dp"
+                        android:text="SAVE MAP"
+                        android:background="@drawable/selector_btn_holo_blue"
+                        android:textColor="@color/neon_blue"
+                        android:textSize="11sp"
+                        android:textStyle="bold" />
 
-                <ImageButton
-                    android:id="@+id/btnRobotArcRight"
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
-                    android:src="@drawable/ic_turn_right_arc"
-                    android:background="?attr/selectableItemBackgroundBorderless"
-                    android:scaleType="fitCenter"
-                    android:padding="10dp"
-                    app:tint="@color/primary"/>
+                    <androidx.appcompat.widget.AppCompatButton
+                        android:id="@+id/btnLoadMap"
+                        android:layout_width="match_parent"
+                        android:layout_height="32dp"
+                        android:layout_marginBottom="6dp"
+                        android:text="LOAD MAP"
+                        android:background="@drawable/selector_btn_holo_green"
+                        android:textColor="@color/neon_green"
+                        android:textSize="11sp"
+                        android:textStyle="bold" />
 
-                <!-- Row 1: Spot Turns & Backward -->
-                <ImageButton
-                    android:id="@+id/btnRobotLeft"
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
-                    android:src="@drawable/ic_rotate_left"
-                    android:background="?attr/selectableItemBackgroundBorderless"
-                    android:scaleType="fitCenter"
-                    android:padding="10dp"
-                    app:tint="@color/primary"/>
+                    <androidx.appcompat.widget.AppCompatButton
+                        android:id="@+id/btnClearMap"
+                        android:layout_width="match_parent"
+                        android:layout_height="32dp"
+                        android:text="CLEAR MAP"
+                        android:background="@drawable/selector_btn_holo_red"
+                        android:textColor="@color/neon_red"
+                        android:textSize="11sp"
+                        android:textStyle="bold" />
+                </LinearLayout>
 
-                <ImageButton
-                    android:id="@+id/btnRobotBackward"
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
-                    android:src="@drawable/ic_arrow_down"
-                    android:background="?attr/selectableItemBackgroundBorderless"
-                    android:scaleType="fitCenter"
-                    android:padding="10dp"
-                    app:tint="@color/primary"/>
+                <!-- Directional Controls -->
+                <GridLayout
+                    android:id="@+id/directionalControls"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:columnCount="3"
+                    android:rowCount="2"
+                    android:background="@drawable/btn_dpad_neumorphic"
+                    android:padding="4dp">
 
-                <ImageButton
-                    android:id="@+id/btnRobotRight"
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
-                    android:src="@drawable/ic_rotate_right"
-                    android:background="?attr/selectableItemBackgroundBorderless"
-                    android:scaleType="fitCenter"
-                    android:padding="10dp"
-                    app:tint="@color/primary"/>
+                    <!-- Row 0: Arc Turns & Forward -->
+                    <ImageButton
+                        android:id="@+id/btnRobotArcLeft"
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:src="@drawable/ic_turn_left_arc"
+                        android:background="?attr/selectableItemBackgroundBorderless"
+                        android:scaleType="fitCenter"
+                        android:padding="10dp"
+                        app:tint="@color/primary"/>
 
-            </GridLayout>
+                    <ImageButton
+                        android:id="@+id/btnRobotForward"
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:src="@drawable/ic_arrow_up"
+                        android:background="?attr/selectableItemBackgroundBorderless"
+                        android:scaleType="fitCenter"
+                        android:padding="10dp"
+                        app:tint="@color/primary"/>
+
+                    <ImageButton
+                        android:id="@+id/btnRobotArcRight"
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:src="@drawable/ic_turn_right_arc"
+                        android:background="?attr/selectableItemBackgroundBorderless"
+                        android:scaleType="fitCenter"
+                        android:padding="10dp"
+                        app:tint="@color/primary"/>
+
+                    <!-- Row 1: Spot Turns & Backward -->
+                    <ImageButton
+                        android:id="@+id/btnRobotLeft"
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:src="@drawable/ic_rotate_left"
+                        android:background="?attr/selectableItemBackgroundBorderless"
+                        android:scaleType="fitCenter"
+                        android:padding="10dp"
+                        app:tint="@color/primary"/>
+
+                    <ImageButton
+                        android:id="@+id/btnRobotBackward"
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:src="@drawable/ic_arrow_down"
+                        android:background="?attr/selectableItemBackgroundBorderless"
+                        android:scaleType="fitCenter"
+                        android:padding="10dp"
+                        app:tint="@color/primary"/>
+
+                    <ImageButton
+                        android:id="@+id/btnRobotRight"
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:src="@drawable/ic_rotate_right"
+                        android:background="?attr/selectableItemBackgroundBorderless"
+                        android:scaleType="fitCenter"
+                        android:padding="10dp"
+                        app:tint="@color/primary"/>
+                </GridLayout>
+            </LinearLayout>
             
                 <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/btnRobotStart"
@@ -383,7 +385,7 @@
                 android:textSize="16sp"
                 android:textStyle="bold"
                 android:stateListAnimator="@null"
-                app:layout_constraintTop_toBottomOf="@id/directionalControls"
+                app:layout_constraintTop_toBottomOf="@id/controlsAndSaveLayout"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"/>
 
