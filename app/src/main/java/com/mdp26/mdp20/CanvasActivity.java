@@ -170,9 +170,9 @@ public class CanvasActivity extends AppCompatActivity {
                     Toast.makeText(this, "Cannot clear map while Robot is moving!", Toast.LENGTH_LONG).show();
                 } else {
                     if (myApp.btConnection() != null) {
-                        String strClear = "CLEAR\n";
+                        String strClear = "CLEAR";
                         myApp.btConnection().sendMessage(strClear);
-                        logMessage("SENT", "CLEAR", "#00BCD4");
+                        logMessage("SENT", strClear, "#00BCD4");
                     }
                     myApp.grid().clear();
                     canvasView.invalidate();
@@ -337,9 +337,9 @@ public class CanvasActivity extends AppCompatActivity {
 
             // First, tell the RPi to wipe its memory bank
             if (myApp.btConnection() != null) {
-                String strClear = "CLEAR\n";
+                String strClear = "CLEAR";
                 myApp.btConnection().sendMessage(strClear);
-                logMessage("SENT", "CLEAR", "#00BCD4");
+                logMessage("SENT", strClear, "#00BCD4");
             }
             myApp.grid().clear();
 
@@ -355,9 +355,9 @@ public class CanvasActivity extends AppCompatActivity {
                 // Blast the newly loaded obstacle out to the RPi memory bank
                 if (myApp.btConnection() != null) {
                     BluetoothMessage msg = BluetoothMessage.ofObstacleEventMessage(obs.getId(), x, y, facing, false);
-                    String msgStr = msg.getAsJsonMessage().getAsJson() + "\n"; // Add newline
+                    String msgStr = msg.getAsJsonMessage().getAsJson();
                     myApp.btConnection().sendMessage(msgStr);
-                    logMessage("SENT", msg.getAsJsonMessage().getAsJson(), "#00BCD4"); // Log original JSON without newline
+                    logMessage("SENT", msgStr, "#00BCD4");
                 }
             }
             canvasView.invalidate();

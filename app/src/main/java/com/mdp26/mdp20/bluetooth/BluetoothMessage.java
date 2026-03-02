@@ -146,7 +146,7 @@ public sealed interface BluetoothMessage permits BluetoothMessage.CustomMessage,
         public String getAsJson() {
             // Android sends individual "OBSTACLE" messages to the RPi memory bank.
             // When we click "Send Data", we just send "PATH" to trigger the RPi to forward its bank to the PC.
-            return "PATH\n";
+            return "PATH";
         }
     }
     public static BluetoothMessage ofObstaclesMessage(List<GridObstacle> obstacleList) {
