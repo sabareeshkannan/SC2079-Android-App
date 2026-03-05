@@ -168,7 +168,7 @@ public class BluetoothConnection {
     public void sendMessage(String s) {
         if (messageThread != null) {
             Log.d(TAG, "write: Writing to output stream: " + s);
-            messageThread.write(s.getBytes(StandardCharsets.UTF_8));
+            messageThread.write((s + "\n").getBytes(StandardCharsets.UTF_8));
         }
     }
 }
