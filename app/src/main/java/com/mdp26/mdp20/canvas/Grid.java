@@ -129,5 +129,6 @@ public class Grid {
      */
     public void clear() {
         obstacleList.clear();
+        idGen = 1;
     }
 }
