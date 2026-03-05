@@ -156,6 +156,10 @@ public class CanvasActivity extends AppCompatActivity {
         Button btnInitializeRobot = findViewById(R.id.btnInitializeRobot);
         btnInitializeRobot.setOnClickListener(view -> initializeRobotFromInput());
 
+        Button btnFastAdd = findViewById(R.id.btnFastAdd);
+        if (btnFastAdd != null)
+            btnFastAdd.setOnClickListener(view -> showFastAddDialog());
+
         Button btnSaveMap = findViewById(R.id.btnSaveMap);
         if (btnSaveMap != null)
             btnSaveMap.setOnClickListener(view -> saveMap());
@@ -366,6 +370,97 @@ public class CanvasActivity extends AppCompatActivity {
             Log.e(TAG, "Failed to load obstacles", e);
             Toast.makeText(this, "Failed to load map.", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    private void showFastAddDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Fast Add Obstacles");
+
+        final EditText input = new EditText(this);
+        input.setHint("Format: X Y DIR (e.g. 1 2 N\n3 4 E)");
+        input.setInputType(android.text.InputType.TYPE_CLASS_TEXT | android.text.InputType.TYPE_TEXT_FLAG_MULTI_LINE);
+        input.setMinLines(5);
+        input.setGravity(android.view.Gravity.TOP | android.view.Gravity.START);
+
+        android.widget.FrameLayout container = new android.widget.FrameLayout(this);
+        android.widget.FrameLayout.LayoutParams params = new android.widget.FrameLayout.LayoutParams(
+                android.view.ViewGroup.LayoutParams.MATCH_PARENT,
+                android.view.ViewGroup.LayoutParams.WRAP_CONTENT);
+        int margin = (int) (20 * getResources().getDisplayMetrics().density);
+        params.setMargins(margin, margin, margin, margin);
+        input.setLayoutParams(params);
+        container.addView(input);
+
+        builder.setView(container);
+
+        builder.setPositiveButton("Add", (dialog, which) -> {
+            String text = input.getText().toString();
+            processFastAdd(text);
+        });
+        builder.setNegativeButton("Cancel", (dialog, which) -> dialog.cancel());
+
+        builder.show();
+    }
+
+    private void processFastAdd(String input) {
+        String currentStatus = robotStatusDynamic.getText().toString().toUpperCase();
+        if (currentStatus.contains("RUNNING") || currentStatus.contains("MOVING")) {
+            Toast.makeText(this, "Cannot fast add while Robot is moving!", Toast.LENGTH_LONG).show();
+            return;
+        }
+
+        String[] lines = input.split("\n");
+        int count = 0;
+        int skipped = 0;
+        for (String line : lines) {
+            line = line.trim();
+            if (line.isEmpty())
+                continue;
+            String[] parts = line.split("[\\s,]+");
+            if (parts.length >= 2) {
+                try {
+                    int x = Integer.parseInt(parts[0]);
+                    int y = Integer.parseInt(parts[1]);
+                    Facing facing = Facing.NORTH;
+                    if (parts.length >= 3) {
+                        String fStr = parts[2].toUpperCase();
+                        if (fStr.startsWith("N"))
+                            facing = Facing.NORTH;
+                        else if (fStr.startsWith("S"))
+                            facing = Facing.SOUTH;
+                        else if (fStr.startsWith("E"))
+                            facing = Facing.EAST;
+                        else if (fStr.startsWith("W"))
+                            facing = Facing.WEST;
+                        else
+                            facing = convertFacing(fStr);
+                    }
+                    if (myApp.grid().isInsideGrid(x, y)) {
+                        if (!myApp.grid().hasObstacle(x, y)) {
+                            GridObstacle obs = GridObstacle.of(x, y, facing);
+                            myApp.grid().addObstacle(obs);
+                            count++;
+                            if (myApp.btConnection() != null) {
+                                BluetoothMessage msg = BluetoothMessage.ofObstacleEventMessage(obs.getId(), x, y,
+                                        facing, false);
+                                String msgStr = msg.getAsJsonMessage().getAsJson();
+                                myApp.btConnection().sendMessage(msgStr);
+                                logMessage("SENT", msgStr, "#00BCD4");
+                            }
+                        } else {
+                            skipped++;
+                        }
+                    }
+                } catch (NumberFormatException e) {
+                    Log.e(TAG, "Failed to parse line: " + line, e);
+                }
+            }
+        }
+        canvasView.invalidate();
+        String msg = "Added " + count + " obstacles.";
+        if (skipped > 0)
+            msg += " Skipped " + skipped + " (already occupied).";
+        Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
     }
 
     private void applyInputFilter(EditText input) {

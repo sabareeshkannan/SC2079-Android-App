@@ -265,6 +265,17 @@
                     android:gravity="center_vertical">
 
                     <androidx.appcompat.widget.AppCompatButton
+                        android:id="@+id/btnFastAdd"
+                        android:layout_width="match_parent"
+                        android:layout_height="32dp"
+                        android:layout_marginBottom="6dp"
+                        android:text="FAST ADD"
+                        android:background="@drawable/selector_btn_holo_blue"
+                        android:textColor="@color/neon_blue"
+                        android:textSize="11sp"
+                        android:textStyle="bold" />
+
+                    <androidx.appcompat.widget.AppCompatButton
                         android:id="@+id/btnSaveMap"
                         android:layout_width="match_parent"
                         android:layout_height="32dp"

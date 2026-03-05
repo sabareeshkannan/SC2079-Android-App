@@ -58,6 +58,7 @@ public class BluetoothActivity extends AppCompatActivity {
     private TextView receivedMsgView;
     private LinearLayout connectedPanel;
     private TextView connectedText;
+    private View indicatorCircle;
     private SwitchCompat discoverSwitch;
     private View saberBlade; // The neon blade view
     private android.animation.ValueAnimator saberAnimator;
@@ -193,11 +194,13 @@ public class BluetoothActivity extends AppCompatActivity {
         });
 
         connectedPanel = findViewById(R.id.statusLayout);
-        if (myApp.btConnection() == null)
-            connectedPanel.setVisibility(View.INVISIBLE); // set invisible if no connection
+        indicatorCircle = findViewById(R.id.indicatorCircle);
+        connectedPanel.setVisibility(View.VISIBLE); // always visible now
         receivedMsgView = findViewById(R.id.textReceivedMsg);
         receivedMsgView.setText("Received Messages: ");
         connectedText = findViewById(R.id.textConnectedStatus);
+
+        updateConnectionUI(myApp.btConnection() != null, null);
 
         saberBlade = findViewById(R.id.saberBlade);
     }
@@ -260,7 +263,25 @@ public class BluetoothActivity extends AppCompatActivity {
         });
 
         // Play sound effect if expanded? (Optional, skipping for now as per "clean"
+        // Play sound effect if expanded? (Optional, skipping for now as per "clean"
         // request)
+    }
+
+    private void updateConnectionUI(boolean isConnected, String deviceName) {
+        if (indicatorCircle != null) {
+            indicatorCircle.setBackgroundTintList(android.content.res.ColorStateList.valueOf(
+                    androidx.core.content.ContextCompat.getColor(this,
+                            isConnected ? R.color.status_success : R.color.neon_red)));
+        }
+        if (connectedText != null) {
+            connectedText.setTextColor(androidx.core.content.ContextCompat.getColor(this,
+                    isConnected ? R.color.status_success : R.color.neon_red));
+            if (isConnected) {
+                connectedText.setText(deviceName != null ? "Connected to " + deviceName : "CONNECTED");
+            } else {
+                connectedText.setText("DISCONNECTED");
+            }
+        }
     }
 
     @Override
@@ -369,7 +390,6 @@ public class BluetoothActivity extends AppCompatActivity {
                      * btConnectedSfx.start();
                      * }
                      */
-                    connectedText.setText("Connected to " + device.getName());
 
                     // Turn off discoverable switch UI visually
                     if (discoverSwitch != null && discoverSwitch.isChecked()) {
@@ -377,7 +397,7 @@ public class BluetoothActivity extends AppCompatActivity {
                         animateLightsaber(false);
                     }
                 }
-                connectedPanel.setVisibility(connected ? View.VISIBLE : View.INVISIBLE);
+                updateConnectionUI(connected, device.getName());
                 // refresh the device list
                 refreshDeviceList();
             }
