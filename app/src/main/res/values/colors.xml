@@ -33,8 +33,7 @@
 
 
     <!-- Canvas Specific Colors -->
-    <color name="grid_line_red">#FF3B30</color>
-    <color name="grid_line_blue">#007AFF</color>
+    <color name="grid_line">#33000000</color> <!-- Very light translucent black (Grey) -->
     
     <color name="obstacle_body">#F2F2F7</color> <!-- Very Light Grey -->
     <color name="obstacle_selected">#007AFF</color> 

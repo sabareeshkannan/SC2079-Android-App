@@ -15,8 +15,7 @@ public class CanvasView extends View {
     private final String TAG = "CanvasView";
     private int cellSize; // Calculated dynamically
     private int offsetX, offsetY; // To center the grid
-    private final Paint gridPaintRed = new Paint();
-    private final Paint gridPaintBlue = new Paint();
+    private final Paint gridPaint = new Paint();
     private final Paint textPaint = new Paint();
     private final Paint obstacleSelectedPaint = new Paint();
     private final Paint obstaclePaint = new Paint();
@@ -39,17 +38,11 @@ public class CanvasView extends View {
     }
 
     private void init(Context context) {
-        // Grid styling - Red
-        gridPaintRed
-                .setColor(androidx.core.content.ContextCompat.getColor(context, com.mdp26.mdp20.R.color.grid_line_red));
-        gridPaintRed.setStrokeWidth(2);
-        gridPaintRed.setStyle(Paint.Style.STROKE);
-
-        // Grid styling - Blue
-        gridPaintBlue.setColor(
-                androidx.core.content.ContextCompat.getColor(context, com.mdp26.mdp20.R.color.grid_line_blue));
-        gridPaintBlue.setStrokeWidth(2);
-        gridPaintBlue.setStyle(Paint.Style.STROKE);
+        // Grid styling
+        gridPaint
+                .setColor(androidx.core.content.ContextCompat.getColor(context, com.mdp26.mdp20.R.color.grid_line));
+        gridPaint.setStrokeWidth(2);
+        gridPaint.setStyle(Paint.Style.STROKE);
 
         // Label text styling
         textPaint.setColor(androidx.core.content.ContextCompat.getColor(context, com.mdp26.mdp20.R.color.text_primary));
@@ -133,16 +126,14 @@ public class CanvasView extends View {
         int gridWidth = gridSize * cellSize;
         int gridHeight = gridSize * cellSize;
 
-        // Draw vertical grid lines (alternating colors)
+        // Draw vertical grid lines
         for (int i = 0; i <= gridSize; i++) {
-            Paint paintToUse = (i % 2 == 0) ? gridPaintRed : gridPaintBlue;
-            canvas.drawLine(offsetX + i * cellSize, offsetY, offsetX + i * cellSize, offsetY + gridHeight, paintToUse);
+            canvas.drawLine(offsetX + i * cellSize, offsetY, offsetX + i * cellSize, offsetY + gridHeight, gridPaint);
         }
 
-        // Draw horizontal grid lines (alternating colors)
+        // Draw horizontal grid lines
         for (int i = 0; i <= gridSize; i++) {
-            Paint paintToUse = (i % 2 == 0) ? gridPaintBlue : gridPaintRed;
-            canvas.drawLine(offsetX, offsetY + i * cellSize, offsetX + gridWidth, offsetY + i * cellSize, paintToUse);
+            canvas.drawLine(offsetX, offsetY + i * cellSize, offsetX + gridWidth, offsetY + i * cellSize, gridPaint);
         }
     }
 

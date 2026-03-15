@@ -32,8 +32,7 @@
 
 
     <!-- Canvas Specific Colors -->
-    <color name="grid_line_red">#FF0000</color>
-    <color name="grid_line_blue">#00EAFF</color>
+    <color name="grid_line">#33FFFFFF</color> <!-- Very translucent white -->
     
     <color name="obstacle_body">#333333</color>
     <color name="obstacle_selected">#FFFFFF</color> 
